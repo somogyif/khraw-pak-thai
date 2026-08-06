@@ -106,6 +106,7 @@ h2{font-size:clamp(1.9rem,4vw,2.9rem)}
 .hero-rating .half{opacity:.4}
 .hero-rating .rmeta{font-size:.85rem;color:#d7d0bd}
 .badge-thai{display:inline-flex;align-items:center;gap:6px;background:var(--gold);color:var(--green-2);font-family:var(--font-head);font-weight:600;font-size:.85rem;padding:8px 15px;border-radius:999px}
+.badge-loc{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);border:1px solid rgba(216,180,92,.45);color:#fff;font-family:var(--font-head);font-weight:600;font-size:.85rem;padding:8px 15px;border-radius:999px}
 .hero-media img{border-radius:24px;box-shadow:0 30px 60px rgba(0,0,0,.4);aspect-ratio:3/2;object-fit:cover}
 
 /* ===== USP ===== */
