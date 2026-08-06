@@ -336,6 +336,10 @@ h2{font-size:clamp(1.9rem,4vw,2.9rem)}
   .nav-toggle{display:flex}
   .menu-cols{columns:1}
   .story-media{order:-1}
+  /* menü: az ár külön sorba, hogy a hosszú (több húsos) árak ne csússzanak ki */
+  .mi{flex-wrap:wrap}
+  .mi-price{white-space:normal;width:100%;margin-top:4px;padding-left:78px}
+  .mi:not(:has(.mi-thumb)) .mi-price{padding-left:0}
 }
 @media(max-width:520px){
   .usp-grid,.dish-grid,.review-grid,.footer-grid,.everyone-grid,.ef-row,.daily-cols{grid-template-columns:1fr}
