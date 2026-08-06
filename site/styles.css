@@ -95,7 +95,7 @@ h2{font-size:clamp(1.9rem,4vw,2.9rem)}
 
 /* ===== hero ===== */
 .hero{background:var(--green);color:var(--cream);padding:70px 0 90px;overflow:hidden}
-.hero-inner{display:grid;grid-template-columns:1.05fr .95fr;gap:50px;align-items:center}
+.hero-inner{display:grid;grid-template-columns:1.05fr .95fr;gap:50px;align-items:stretch}
 .hero h1{font-size:clamp(2.3rem,5vw,4rem);font-weight:800;color:#fff;margin:.15em 0 .35em}
 .hero .lead{font-size:1.12rem;max-width:30em;color:#e9e3d0;margin:0 0 30px}
 .hero-actions{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:30px}
@@ -107,7 +107,9 @@ h2{font-size:clamp(1.9rem,4vw,2.9rem)}
 .hero-rating .rmeta{font-size:.85rem;color:#d7d0bd}
 .badge-thai{display:inline-flex;align-items:center;gap:6px;background:var(--gold);color:var(--green-2);font-family:var(--font-head);font-weight:600;font-size:.85rem;padding:8px 15px;border-radius:999px}
 .badge-loc{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);border:1px solid rgba(216,180,92,.45);color:#fff;font-family:var(--font-head);font-weight:600;font-size:.85rem;padding:8px 15px;border-radius:999px}
-.hero-media img{border-radius:24px;box-shadow:0 30px 60px rgba(0,0,0,.4);aspect-ratio:3/2;object-fit:cover}
+.hero-media{position:relative}
+.hero-media img{border-radius:24px;box-shadow:0 30px 60px rgba(0,0,0,.4);object-fit:cover;width:100%;height:100%;min-height:420px}
+.hero-media-cap{position:absolute;left:16px;bottom:16px;background:rgba(14,46,30,.85);color:var(--cream);font-family:var(--font-head);font-weight:600;font-size:.82rem;padding:8px 14px;border-radius:999px;border:1px solid rgba(216,180,92,.5);backdrop-filter:blur(4px)}
 
 /* ===== USP ===== */
 .usp{background:var(--cream-2);padding:56px 0}
@@ -318,8 +320,9 @@ h2{font-size:clamp(1.9rem,4vw,2.9rem)}
 
 /* ===== reszponzív ===== */
 @media(max-width:960px){
-  .hero-inner,.story-grid,.contact-grid,.ts-grid,.events-grid{grid-template-columns:1fr;gap:36px}
-  .hero-media{order:-1}
+  .hero-inner,.story-grid,.contact-grid,.ts-grid,.events-grid{grid-template-columns:1fr;gap:30px}
+  .hero-copy{order:-1}
+  .hero-media img{aspect-ratio:16/10;max-height:300px;height:auto;min-height:0}
   .ts-emblem{order:-1}
   .usp-grid{grid-template-columns:repeat(2,1fr);gap:22px}
   .dish-grid{grid-template-columns:repeat(2,1fr)}
