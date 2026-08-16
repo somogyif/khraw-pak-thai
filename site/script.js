@@ -60,7 +60,7 @@
       lbCap.textContent = cap || '';
       lb.classList.add('open'); lb.setAttribute('aria-hidden','false');
     }
-    function closeLb(){ lb.classList.remove('open'); lb.setAttribute('aria-hidden','true'); lbImg.src=''; }
+    function closeLb(){ lb.classList.remove('open'); lb.setAttribute('aria-hidden','true'); lbImg.src='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'; }
     document.querySelectorAll('.mi-thumb').forEach(function(t){
       t.addEventListener('click', function(){ openLb(t.src, t.getAttribute('data-cap')); });
     });
