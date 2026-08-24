@@ -40,7 +40,9 @@ no database and no payments. Keep it that way unless there is a clear reason not
 7. **The review block is generated.** Everything between `<!-- REVIEWS:START -->`
    and `<!-- REVIEWS:END -->` in `site/index.html` is maintained by
    `scripts/update-reviews.py`. Edit the script, not the block — manual edits get
-   overwritten on the next scheduled run.
+   overwritten on the next scheduled run. Reviews appear in the language they
+   were written in — Google's API selects language-appropriate reviews rather
+   than translating them. That is deliberate, not a bug.
 
 ## Style
 

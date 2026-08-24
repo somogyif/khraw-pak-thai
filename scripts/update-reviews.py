@@ -11,6 +11,13 @@ Az API-kulcs KIZÁRÓLAG a GOOGLE_MAPS_API_KEY környezeti változóból jön
 
 A Google Places API hívásonként legfeljebb 5 véleményt ad vissza — ezek mindig
 a legrelevánsabb/legfrissebb értékelések. A blokk tehát rotál, nem archivál.
+
+Nyelvekről (2026-08 méréssel megállapítva): a languageCode paraméter NEM fordítja
+le a véleményeket, hanem az adott nyelvhez illő véleményeket válogatja ki. A hu és
+az en hívás így két különböző halmazt ad — összesen ~10 véleményt 5 helyett.
+Ezért a vélemények az eredeti nyelvükön jelennek meg mindkét nézetben, ahogy a
+Google Maps is mutatja őket. Ez tudatos döntés, nem hiba: ne próbáljuk "javítani"
+ismételt fordítási kísérletekkel.
 """
 import argparse
 import html
