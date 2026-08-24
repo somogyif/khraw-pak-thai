@@ -56,6 +56,13 @@ no database and no payments. Keep it that way unless there is a clear reason not
 ## Workflow
 
 - **Small, single-purpose commits.** One feature or fix per commit.
+- **Batch pushes — the deploy budget is the real constraint.** Every push to `main`
+  triggers a Netlify production deploy, and on the free plan a deploy costs 15 of the
+  300 monthly credits: roughly **20 deploys per month**. The budget ran out on
+  2026-08-25 after a day of many small pushes (20 deploys = 300 credits). Commit
+  freely, but push related work together rather than one commit at a time. If deploys
+  are paused the work is safe on GitHub and ships when the cycle renews. The scheduled
+  review update also spends from this budget, but only when it finds something new.
 - Review the whole diff before committing — understand every change.
 - After a change, verify in the browser at 320 / 390 / 1280 px in **both languages**,
   and check the console is clean.
