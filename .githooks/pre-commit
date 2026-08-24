@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# Commit előtti ellenőrzés: titok-szkennelés a staged tartalmon + teljes oldal-audit.
+# Bekapcsolás (egyszer, klónozás után):  git config core.hooksPath .githooks
+# Megkerülés vészhelyzetben:             git commit --no-verify
+set -uo pipefail
+
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT" || exit 1
+
+echo "▸ pre-commit ellenőrzés"
+
+# --- 1) titkok a staged tartalomban -----------------------------------------
+SECRET_RE='(api[_-]?key|apikey|secret|passwd|password|private[_-]?key|access[_-]?token)[[:space:]]*[:=][[:space:]]*['"'"'"][^'"'"'"]{8,}|sk_live_[0-9a-zA-Z]{10,}|AIza[0-9A-Za-z_-]{30,}|ghp_[0-9a-zA-Z]{30,}|-----BEGIN [A-Z ]*PRIVATE KEY-----'
+
+leaks=""
+while IFS= read -r f; do
+  [ -z "$f" ] && continue
+  case "$f" in
+    CLAUDE.md|.githooks/*|tests/audit.py) continue ;;   # ezek maguk írják le a mintákat
+  esac
+  if git show ":$f" 2>/dev/null | grep -qEi "$SECRET_RE"; then
+    leaks="${leaks}    - ${f}\n"
+  fi
+done < <(git diff --cached --name-only --diff-filter=ACM)
+
+if [ -n "$leaks" ]; then
+  echo "  ✗ lehetséges titok a commitolandó tartalomban:"
+  printf "%b" "$leaks"
+  echo "  A commit leállt. Vidd ki a kulcsot környezeti változóba / GitHub secretbe."
+  exit 1
+fi
+echo "  ✓ nincs titok a staged tartalomban"
+
+# --- 2) oldal-audit ----------------------------------------------------------
+if ! python3 tests/audit.py > /tmp/kpt-audit.log 2>&1; then
+  echo "  ✗ az oldal-audit elbukott:"
+  grep -E '✗|BUKOTT|•' /tmp/kpt-audit.log | sed 's/^/    /'
+  echo "  Teljes kimenet: python3 tests/audit.py"
+  exit 1
+fi
+echo "  ✓ oldal-audit rendben"
+echo "▸ mehet a commit"

@@ -128,10 +128,35 @@ if form:
 # ---------------------------------------------------------------- biztonság
 print("\nBiztonság")
 
-secret_pat = r"(api[_-]?key|secret|passwd|password)\s*[:=]\s*['\"][^'\"]{8,}|sk_live_|AIza[0-9A-Za-z_-]{20,}"
-hits = [p for p in ("index.html", "styles.css", "script.js")
-        if re.search(secret_pat, read(p), re.I)]
-check("nincs beégetett titok vagy API-kulcs", not hits, ", ".join(hits))
+# a teljes verziókövetett tartalmat nézzük, nem csak a három fő fájlt
+secret_pat = (r"(api[_-]?key|apikey|secret|passwd|password|private[_-]?key|access[_-]?token)"
+              r"\s*[:=]\s*['\"][^'\"]{8,}"
+              r"|sk_live_[0-9a-zA-Z]{10,}|AIza[0-9A-Za-z_-]{30,}|ghp_[0-9a-zA-Z]{30,}"
+              r"|-----BEGIN [A-Z ]*PRIVATE KEY-----")
+# önmagát és a szabályfájlt kihagyjuk: azok szándékosan tartalmazzák a mintákat
+skip = {"tests/audit.py", "CLAUDE.md", ".githooks/pre-commit"}
+scanned, hits = 0, []
+for dirpath, dirnames, filenames in os.walk(ROOT):
+    dirnames[:] = [d for d in dirnames if d not in {".git", "node_modules", "__pycache__"}]
+    for fn in filenames:
+        full = os.path.join(dirpath, fn)
+        rel = os.path.relpath(full, ROOT)
+        if rel in skip or os.path.splitext(fn)[1].lower() in {
+                ".png", ".jpg", ".jpeg", ".ico", ".webp", ".zip", ".pdf"}:
+            continue
+        try:
+            with open(full, encoding="utf-8") as fh:
+                content = fh.read()
+        except (UnicodeDecodeError, OSError):
+            continue
+        scanned += 1
+        if re.search(secret_pat, content, re.I):
+            hits.append(rel)
+check(f"nincs beégetett titok a repóban ({scanned} fájl átvizsgálva)", not hits, ", ".join(hits))
+check("a pre-commit ellenőrzés verziókövetett",
+      os.path.exists(os.path.join(ROOT, ".githooks", "pre-commit")))
+check("van projektszintű szabályfájl (CLAUDE.md)",
+      os.path.exists(os.path.join(ROOT, "CLAUDE.md")))
 
 check("nincs npm függőség (nincs package.json)",
       not os.path.exists(os.path.join(ROOT, "package.json")))

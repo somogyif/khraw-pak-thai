@@ -69,9 +69,14 @@ What is actively enforced:
 - **Security headers** — HSTS, `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy` (see [`netlify.toml`](netlify.toml)).
 - **Automated audit on every push** — 36 checks covering structure, images, SEO, structured data, the contact form, and security regressions.
 
+- **Pre-commit gate** — scans staged content for secrets and runs the audit before any commit lands.
+- **Working rules** — [`CLAUDE.md`](CLAUDE.md) records the architecture decisions and hard rules (no secrets, no raw HTML injection, no dependencies without a reason) so every future change inherits them.
+
 ```bash
-python3 tests/audit.py            # static audit (runs in CI)
-bash tests/live-check.sh          # smoke-test the deployed site
+git config core.hooksPath .githooks   # enable the pre-commit gate (once, after cloning)
+
+python3 tests/audit.py                # static audit (runs in CI and pre-commit)
+bash tests/live-check.sh              # smoke-test the deployed site
 ```
 
 ## 🚀 Run it locally
