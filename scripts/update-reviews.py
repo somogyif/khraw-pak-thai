@@ -29,7 +29,7 @@ PLACE_NAME = "Khraw Pak Thai restaurant, Dózsa György út 88, Budapest"
 API = "https://places.googleapis.com/v1"
 
 MIN_RATING = 5          # csak ötcsillagos vélemények kerülnek ki
-MIN_LEN = 60            # a túl rövid ("Finom volt") értékelés nem mond semmit
+MIN_LEN = 40            # a túl rövid ("Finom volt") értékelés nem mond semmit
 MAX_LEN = 260           # ennél hosszabbat levágunk mondathatáron
 MAX_REVIEWS = 4         # ennyi fér el a rácsban
 
@@ -95,12 +95,30 @@ def collect(data_hu, data_en):
             entry["text"][lang] = trim((r.get("text") or {}).get("text", ""))
 
     out = []
+    print(f"a Google {len(by_key)} véleményt adott vissza:")
     for entry in by_key.values():
         hu, en = entry["text"].get("hu", ""), entry["text"].get("en", "")
-        if entry["rating"] < MIN_RATING or not entry["author"]:
+        # ha az egyik nyelven nincs szöveg (a Google nem fordított),
+        # a meglévőt használjuk mindkét helyen — jobb, mint kihagyni
+        if hu and not en:
+            en = hu
+        elif en and not hu:
+            hu = en
+
+        author = entry["author"] or "?"
+        why = None
+        if not entry["author"]:
+            why = "nincs szerző"
+        elif entry["rating"] < MIN_RATING:
+            why = f"{entry['rating']}★ (min. {MIN_RATING})"
+        elif len(hu) < MIN_LEN:
+            why = f"túl rövid ({len(hu)} karakter, min. {MIN_LEN})"
+
+        if why:
+            print(f"  – {author}: kihagyva — {why}")
             continue
-        if len(hu) < MIN_LEN or len(en) < MIN_LEN:
-            continue
+
+        print(f"  + {author}: {entry['rating']}★, {len(hu)} karakter")
         out.append({"author": entry["author"], "hu": hu, "en": en})
     return out[:MAX_REVIEWS]
 
