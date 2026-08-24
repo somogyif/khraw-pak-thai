@@ -62,6 +62,8 @@ A modern restaurant website that actually does its job:
 - ✅ **SEO-ready**: structured data, social previews, semantic markup, sitemap
 - ✅ **Fast & fully responsive** — hand-coded, image-optimised, mobile-first
 - ✅ **One-drag deploy** (Netlify-ready static build)
+- ✅ **Audited, not just shipped** — 39 automated checks in CI, a pre-commit gate that blocks secrets, and a sanitised rendering layer
+- ✅ **Self-updating reviews** — fresh Google reviews go live automatically every two days
 
 From a pretty placeholder to a page that answers every question a guest has — and gives them a reason to come in.
 

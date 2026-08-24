@@ -2,7 +2,7 @@
 
 > A complete, from-scratch rebuild of a Budapest restaurant's website: bilingual, SEO-ready, fully responsive, live on a custom domain with continuous deployment. Delivered as a human-directed, AI-assisted build.
 >
-> **Live:** https://khrawpakthai.com · **Repo:** github.com/somogyif/khraw-pak-thai · **Stack:** hand-coded HTML/CSS/JS, Netlify, GitHub CI/CD
+> **Live:** https://khrawpakthai.com · **Repo:** github.com/somogyif/khraw-pak-thai · **Stack:** static HTML/CSS/JS (no framework, zero dependencies), Netlify, GitHub CI/CD
 
 ---
 
@@ -128,10 +128,30 @@ A modern restaurant website that does its job:
 - ✅ Real conversion paths: ordering, events form, tappable phone, map, live open status
 - ✅ SEO-ready: structured data, social previews, sitemap, Search Console
 - ✅ Continuous deployment — every change goes live with one `git push`
+- ✅ Sanitised rendering layer — the language switch never injects raw HTML
+- ✅ 39 automated checks in CI on every push, plus a pre-commit gate
+- ✅ Self-updating reviews — fresh Google reviews published automatically every two days
 
 From a placeholder-titled builder page to a genuine, conversion-focused restaurant site — grounded in the restaurant's real menu, real reviews, real photos, and a real brand story.
 
 ---
+
+## 10b. Engineering discipline
+
+The project deliberately answers the usual criticism of AI-assisted builds — that they
+ship fast and then collapse in production:
+
+- **Static by design.** No database, no accounts, no payments, no secrets in the
+  codebase, zero npm dependencies. Most of the attack surface simply does not exist.
+- **Sanitised rendering.** The bilingual switch parses content inside an inert
+  `<template>` and filters it against tag and attribute allowlists — verified end to
+  end with an XSS fixture, from the data source through to the rendered page.
+- **Automated verification.** 39 checks (structure, images, SEO, structured data,
+  form integrity, repo-wide secret scan, and a regression guard on the sanitiser) run
+  in CI on every push, with a weekly smoke test against the live site.
+- **A pre-commit gate** blocks any commit carrying a secret or failing the audit.
+- **A written rules file** (`CLAUDE.md`) records the architecture decisions so future
+  changes inherit them instead of drifting.
 
 ## 11. Skills & tools demonstrated
 

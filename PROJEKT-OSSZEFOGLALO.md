@@ -2,7 +2,7 @@
 
 **Élő oldal:** https://khrawpakthai.com
 **Repó:** github.com/somogyif/khraw-pak-thai
-**Állapot:** élesben, működik · 17 commit · GitHub → Netlify automatikus élesítés
+**Állapot:** élesben, működik · GitHub → Netlify automatikus élesítés · CI-ben futó audit
 **Utolsó frissítés:** 2026. augusztus
 
 ---
@@ -11,7 +11,7 @@
 
 A **Khraw Pak Thai** egy budapesti thai étterem, amely 2026 elején a **Hősök tere mellé** költözött (Dózsa György út 88., egy 19. századi kupolás villában, közvetlen kilátással a térre). Az új helyen kiderült, hogy a vendégek egy része a megszokott hazai ízeket is keresi — így az étlap magyar klasszikusokkal bővült, és **thai–magyar fúziós étteremmé** vált.
 
-Az étterem rendelkezik a **Thai SELECT Casual** minősítéssel — ez a Thai Királyi Kormány Kereskedelmi Minisztériumának hivatalos igazolása arról, hogy a konyha valóban autentikus thai. Google-értékelés: **4,2 ★ / 73 vélemény**.
+Az étterem rendelkezik a **Thai SELECT Casual** minősítéssel — ez a Thai Királyi Kormány Kereskedelmi Minisztériumának hivatalos igazolása arról, hogy a konyha valóban autentikus thai. Google-értékelés: **4,2 ★ / 76 vélemény**.
 
 **A feladat:** a meglévő weboldal helyett egy olyan oldal, ami tényleg vendéget hoz.
 
@@ -72,6 +72,8 @@ A projekt egy szoros, iteratív körben zajlott: **irány kijelölése → megé
 - **Kétnyelvűség (HU/EN)** — saját, könnyű megoldás `data-en` attribútumokkal, fejlécbeli váltóval, a választás megjegyzésével; a vélemények, űrlapmezők és a nyitva-jelző is fordul
 - **Reszponzív** — mobilon a hero szövege van elöl, a hosszú többáras sorok külön sorba tördelnek
 - **Márkás favicon** — a logó thai templom-emblémájából, több méretben (`favicon.ico` + PNG + apple-touch-icon)
+- **Szűrt fordítási réteg** — a nyelvváltó soha nem szúr be nyers HTML-t: a tartalom inert `<template>`-ben párszolódik, majd tag- és attribútum-engedélyezőlistán megy át. Eseménykezelők, `style`, `href`, `src` és ismeretlen tagek eltávolítva.
+- **Automatikus vélemény-frissítés** — kétnaponta lefutó feladat lehívja a friss Google-értékeléseket, kiszűri az ötcsillagos, érdemi hosszúságúakat, escape-elve beírja őket az oldalba, és csak akkor élesít, ha az audit is átment.
 
 ---
 
@@ -131,6 +133,18 @@ A projekt végén részletes, automatizált + kézi ellenőrzés futott le.
 
 Mindhárom javítás élesítve és élőben visszaellenőrizve.
 
+### Az ellenőrzés automatizálása
+
+A kézi átvizsgálás után az egész **beépült a folyamatba**, hogy ne kelljen újra kézzel csinálni:
+
+- **`tests/audit.py` — 39 ellenőrzés** külső függőség nélkül: szerkezet, képek és alt-szövegek, SEO és meta, strukturált adatok érvényessége, űrlap (honeypot, rejtett mező), titok-szivárgás a teljes repóban, valamint regressziós őr a szűrőre — ha valaki visszaírja a nyers beszúrást, a teszt bukik.
+- **`tests/live-check.sh`** — az élesített oldal füstpróbája: HTTP/HTTPS, biztonsági fejlécek, sitemap, robots, favicon, átirányítás.
+- **CI** — minden pusholásnál lefut az audit, hetente egyszer pedig az élő oldal ellenőrzése.
+- **Pre-commit kapu** — a commit leáll, ha titok kerülne a kódba vagy bukna az audit. Hamis API-kulccsal tesztelve: blokkolt.
+- **`CLAUDE.md`** — a projekt szabályfájlja: architektúra-döntések és kemény szabályok, hogy minden jövőbeli változtatás örökölje őket.
+
+**Biztonsági alapállás:** az oldal *tervezetten statikus* — nincs adatbázis, nincs felhasználói fiók, nincs titok a kódban, nulla npm függőség. Ez eleve kizárja a dinamikus alkalmazások támadási felületének nagy részét.
+
 ---
 
 ## 10. Eredmény
@@ -141,14 +155,15 @@ Mindhárom javítás élesítve és élőben visszaellenőrizve.
 - ✅ Valódi konverziós pontok: Wolt-rendelés, rendezvény-űrlap, kattintható telefon, térkép, élő nyitvatartás-jelzés
 - ✅ SEO-kész: strukturált adat, közösségi előnézet, sitemap, Search Console
 - ✅ Automatikus élesítés: egy `git push` — és pár perc múlva élesben
+- ✅ Szűrt renderelés, pre-commit kapu, 39 automatizált ellenőrzés CI-ben
+- ✅ A Google-értékelések kétnaponta maguktól frissülnek
 
-**Számokban:** 17 commit · 69 fájl · 1 195 sor saját kód (HTML/CSS/JS) · 48 étlap-bélyegkép · 2 nyelv · 0 hiba a záró auditban.
+**Számokban:** 25+ commit · 1 300+ sor saját kód (HTML/CSS/JS) · 48 étlap-bélyegkép · 2 nyelv · 39 automatizált ellenőrzés · 0 függőség.
 
 ---
 
 ## 11. Következő lehetséges lépések
 
-- **Automatikus vélemény-frissítés** — ütemezett GitHub Actions feladat, ami a Google Places API-ból 2 naponta lehúzza a friss értékeléseket, és magától élesíti (egyszeri API-kulcs beállítást igényel; a Google lekérésenként legfeljebb 5 véleményt ad vissza, ezek mindig a legfrissebbek)
 - **Galéria** a teraszos és enteriőr fotókból
 - **Csípősség-skála és diétás jelölések** az étlapon (🌶️ szintek, vegetáriánus / vegán / gluténmentes)
 - **Foodora / további rendelési felületek** kiemelése, ha van
