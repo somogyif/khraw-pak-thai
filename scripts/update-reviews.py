@@ -90,9 +90,12 @@ def collect(data_hu, data_en):
             author = (r.get("authorAttribution") or {}).get("displayName", "").strip()
             key = (author, r.get("publishTime", ""))
             entry = by_key.setdefault(
-                key, {"author": author, "rating": r.get("rating", 0), "text": {}}
+                key,
+                {"author": author, "rating": r.get("rating", 0), "text": {}, "got": {}},
             )
-            entry["text"][lang] = trim((r.get("text") or {}).get("text", ""))
+            body = r.get("text") or {}
+            entry["text"][lang] = trim(body.get("text", ""))
+            entry["got"][lang] = body.get("languageCode", "?")
 
     out = []
     print(f"a Google {len(by_key)} véleményt adott vissza:")
@@ -118,7 +121,10 @@ def collect(data_hu, data_en):
             print(f"  – {author}: kihagyva — {why}")
             continue
 
-        print(f"  + {author}: {entry['rating']}★, {len(hu)} karakter")
+        got = entry.get("got", {})
+        langs = f"hu→{got.get('hu', '-')}, en→{got.get('en', '-')}"
+        same = " [HU és EN azonos]" if hu == en else ""
+        print(f"  + {author}: {entry['rating']}★, {len(hu)} karakter ({langs}){same}")
         out.append({"author": entry["author"], "hu": hu, "en": en})
     return out[:MAX_REVIEWS]
 
