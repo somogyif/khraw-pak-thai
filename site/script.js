@@ -69,11 +69,48 @@
   }
 
   // Nyelvváltás (HU alap, EN a data-en attribútumból)
+  // Biztonság: a szöveget nem nyers innerHTML-ként szúrjuk be, hanem szűrve.
+  // Csak ez a néhány, nem interaktív tag és a class attribútum engedélyezett;
+  // minden más (script, eseménykezelő, külső forrás) eltávolításra kerül.
+  var ALLOWED_TAGS = { BR:1, EM:1, STRONG:1, SMALL:1, SPAN:1, B:1, I:1 };
+  var ALLOWED_ATTR = { 'class':1 };
+
+  function sanitizeToFragment(markup){
+    var tpl = document.createElement('template');
+    tpl.innerHTML = markup || '';   // template = inert párszítás: script nem fut, kép nem töltődik
+    (function clean(node){
+      var child = node.firstChild;
+      while(child){
+        var next = child.nextSibling;
+        if(child.nodeType === 1){                    // elem
+          if(ALLOWED_TAGS[child.tagName]){
+            for(var i = child.attributes.length - 1; i >= 0; i--){
+              var name = child.attributes[i].name;
+              if(!ALLOWED_ATTR[name.toLowerCase()]) child.removeAttribute(name);
+            }
+            clean(child);
+          } else {                                   // nem engedélyezett tag → csak a szövege marad
+            child.parentNode.replaceChild(document.createTextNode(child.textContent || ''), child);
+          }
+        } else if(child.nodeType !== 3){             // megjegyzés stb. → el
+          child.parentNode.removeChild(child);
+        }
+        child = next;
+      }
+    })(tpl.content);
+    return tpl.content;
+  }
+
+  function setHtmlSafely(el, markup){
+    while(el.firstChild) el.removeChild(el.firstChild);
+    el.appendChild(sanitizeToFragment(markup));
+  }
+
   var langBtn = document.getElementById('langToggle');
   function setLang(lang){
     document.querySelectorAll('[data-en]').forEach(function(el){
       if(!el.hasAttribute('data-hu')) el.setAttribute('data-hu', el.innerHTML);
-      el.innerHTML = (lang === 'en') ? el.getAttribute('data-en') : el.getAttribute('data-hu');
+      setHtmlSafely(el, (lang === 'en') ? el.getAttribute('data-en') : el.getAttribute('data-hu'));
     });
     document.documentElement.lang = (lang === 'en') ? 'en' : 'hu';
     if(langBtn) langBtn.textContent = (lang === 'en') ? 'HU' : 'EN';

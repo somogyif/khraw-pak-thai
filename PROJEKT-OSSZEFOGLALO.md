@@ -1,0 +1,158 @@
+# Khraw Pak Thai — weboldal projekt · teljes összefoglaló
+
+**Élő oldal:** https://khrawpakthai.com
+**Repó:** github.com/somogyif/khraw-pak-thai
+**Állapot:** élesben, működik · 17 commit · GitHub → Netlify automatikus élesítés
+**Utolsó frissítés:** 2026. augusztus
+
+---
+
+## 1. Kontextus — miről szól a projekt
+
+A **Khraw Pak Thai** egy budapesti thai étterem, amely 2026 elején a **Hősök tere mellé** költözött (Dózsa György út 88., egy 19. századi kupolás villában, közvetlen kilátással a térre). Az új helyen kiderült, hogy a vendégek egy része a megszokott hazai ízeket is keresi — így az étlap magyar klasszikusokkal bővült, és **thai–magyar fúziós étteremmé** vált.
+
+Az étterem rendelkezik a **Thai SELECT Casual** minősítéssel — ez a Thai Királyi Kormány Kereskedelmi Minisztériumának hivatalos igazolása arról, hogy a konyha valóban autentikus thai. Google-értékelés: **4,2 ★ / 73 vélemény**.
+
+**A feladat:** a meglévő weboldal helyett egy olyan oldal, ami tényleg vendéget hoz.
+
+---
+
+## 2. Kiindulási állapot — mi volt a baj a régi oldallal
+
+Az induló auditban ezek jöttek elő:
+
+| Probléma | Miért baj |
+|---|---|
+| Az oldal címe szó szerint **„Weboldal HU"** | Ez jelent meg a böngészőfülön és a Google-találatban is |
+| **Nem volt étlap az oldalon** — a „Menü" egy külső Canva-designra vitt | A Google nem indexelte, mobilon rossz élmény, a vendég elnavigál |
+| **Nyitvatartás: „Hamarosan!"** | Az egyik legkeresettebb információ hiányzott |
+| **A telefonszám sima szöveg** volt | Mobilon nem lehetett egy koppintással hívni |
+| **Nem volt rendelés / foglalás** | Hiányzott a fő konverziós pont |
+| **Gyenge SEO-alap** | Nincs strukturált adat, nincsenek valódi címsorok, **13 kép alt-szöveg nélkül**, törött közösségi megosztás |
+| **Lassú első betöltés**, Canva alapértelmezett favicon | Több másodperc üres képernyő; idegen márkajelzés a fülön |
+
+Az arculat szép volt — de az oldal nem válaszolt a vendégek kérdéseire.
+
+---
+
+## 3. Munkamódszer
+
+A projekt egy szoros, iteratív körben zajlott: **irány kijelölése → megépítés → ellenőrzés valódi képernyőképeken → finomítás**. Semmi nem lett kitalálva: minden tartalom valós forrásból származik.
+
+| Forrás | Mi került ki belőle | Hogyan |
+|---|---|---|
+| **Étlap-PDF** (20 oldal, kétnyelvű, ~35 MB, Canva-export) | Teljes étlap árakkal + **60+ ételfotó** | `pdftotext`, `pdfimages`, `pdftoppm`; Python/Pillow a **CMYK→sRGB** konverzióhoz és webes optimalizáláshoz |
+| **Google cégprofil** | Nyitvatartás (minden nap 11–22), értékelés, cím, telefon, **valódi vendégvélemények** | Böngésző-automatizálás (cookie-kezelés, legújabb szerinti rendezés, eredeti nyelvű szöveg előhívása) |
+| **Saját terasz-fotók** (HEIC) | Marhapörkölt, rántott hús a Hősök terénél | `sips` HEIC→JPEG (a macOS Fotók-könyvtár zárolását megkerülve) |
+| **Napi menü PDF** | Napi ajánlat kínálata és ára | `pdftotext` |
+| **Webkutatás** | Mit jelent a Thai SELECT, és miért erős érv | keresés + oldal-lekérés |
+| **Cégadatok, épület-információk** | Impresszum, környék bemutatása | céginformációs oldal + kutatás |
+
+**Külön figyelem a nyelvre:** egy friss 5★-os értékelés eredetileg **svédül** íródott. A Google magyar automata fordítása helyett az **eredeti svéd szöveg** lett előhívva és pontosan lefordítva magyarra és angolra.
+
+---
+
+## 4. Mit tud a kész oldal
+
+**Szerkezet és tartalom**
+- **Hero** — headline, bevezető, 4,2★ jelvény, Thai SELECT jelvény, „Kilátással a Hősök térre" jelvény, feliratozott ételfotó
+- **Thai SELECT szekció** — elmagyarázza a kormányzati minősítést mint az autentikusság bizonyítékát
+- **Napi menü** — kiemelt blokk: hétköznap 11:00–14:00, **3 490 Ft**, előétel/leves + főétel
+- **Történet** — thai gyökerek → költözés a Hősök tere mellé → hogyan született a fúziós konyha
+- **„Bátor ízek és ismerős kedvencek"** — a magyar fogások nem mentegetőzés, hanem erősség: a felfedezők és a biztosra menők egy asztalnál
+- **Legnépszerűbb thai ételek** — képes kártyák
+- **Teljes étlap** — kategória-fülek (Thai / Magyar / Köretek / Desszertek / Italok), árakkal, **48 lazy-load bélyegképpel és kattintásra nagyítással** — szándékosan csak a kevésbé ismert fogásoknál, hogy az oldal gyors maradjon
+- **Vélemények** — válogatott, valódi Google-értékelések, névvel, két nyelven
+- **Rendezvény-ajánlatkérő űrlap** — Netlify Forms, spam-védelemmel; a kérések e-mailben érkeznek
+- **GYIK** — strukturált adattal (FAQPage)
+- **Kapcsolat** — nyitvatartás **élő „most nyitva / zárva" jelzéssel budapesti idő szerint**, kattintható telefonszám, térkép, útvonalterv, a helyszín bemutatása
+- **Lábléc** — impresszum (Felba Food Kft., székhely, adószám)
+
+**Technikai megoldások**
+- **Kétnyelvűség (HU/EN)** — saját, könnyű megoldás `data-en` attribútumokkal, fejlécbeli váltóval, a választás megjegyzésével; a vélemények, űrlapmezők és a nyitva-jelző is fordul
+- **Reszponzív** — mobilon a hero szövege van elöl, a hosszú többáras sorok külön sorba tördelnek
+- **Márkás favicon** — a logó thai templom-emblémájából, több méretben (`favicon.ico` + PNG + apple-touch-icon)
+
+---
+
+## 5. SEO-alap
+
+- Beszédes oldalcím és leírás, canonical URL
+- **Open Graph + Twitter Card** márkás megosztási képpel (a törött előnézet javítva, a Facebook gyorsítótára frissítve)
+- **Strukturált adat (JSON-LD)**: `Restaurant` (cím, koordináták, nyitvatartás, árkategória, konyha, minősítés) + `AggregateRating` + `FAQPage`
+- Valódi címsor-hierarchia (egy `h1`), **minden képnek alt-szövege**
+- `sitemap.xml`, `robots.txt`, **Google Search Console** hitelesítés
+- Sebesség: lazy-load képek, méretezett/tömörített fájlok, `fetchpriority` a hero képen
+
+---
+
+## 6. Élesítés és infrastruktúra
+
+- **Repó-struktúra bemutatásra is alkalmas**: a weboldal a `site/` mappában, a dokumentáció a gyökérben, `netlify.toml` konfigurációval (biztonsági fejlécek, kép-cache)
+- **Tárhely: Netlify** — először drag & drop előnézet, majd átállás **GitHub → Netlify automatikus élesítésre**: minden `git push` magától élesedik
+- **Saját domain** (`khrawpakthai.com`) bekötése a szolgáltatónál: az apex és a `www` A-rekordja átirányítva a Netlify-ra — **az e-mail rekordokhoz (MX, SPF, mail/webmail/smtp/imap) hozzányúlás nélkül**, tudatosan külső DNS-en hagyva
+- **HTTPS** automatikus tanúsítvánnyal; HTTP→HTTPS és www→apex átirányítás
+- Diagnosztizált és megoldott hibák: **projekt „Private" láthatóság** (401-es „Login Redirect"), DNS-terjedés ellenőrzése `dig`/`curl` eszközökkel
+- **Élesítés utáni beállítások:** Netlify Forms e-mail értesítés, SimpleAnalytics (adatvédelmi-barát mérés), Search Console sitemap
+
+---
+
+## 7. Márka és szövegezés
+
+- **Pozicionálás:** a magyar fogások nem elrejtve, hanem erősségként — *autentikus thai a felfedezőknek, ismerős magyar ízek a biztosra menőknek, egy asztalnál.* Az autentikusság a **Thai SELECT** minősítéshez van kötve: „nem mi mondjuk magunkról, hanem a thai kormány igazolja."
+- **Hangnem:** közvetlen és barátságos, büszkeséggel a fúziós konyhára, a thai gyökerekre és a helyszínre — túlzás és sznobizmus nélkül
+- **Natív magyar szöveg:** anyanyelvi visszajelzés alapján javítva (csonka címek, suta szóismétlés kigyomlálva) — a cél, hogy magyar szövegírótól származzon, ne fordításnak hasson
+- **A szomszédos hotel nincs reklámozva** — csak a megtalálhatóság kedvéért van megemlítve
+
+---
+
+## 8. Megoldott nehézségek
+
+| Probléma | Megoldás |
+|---|---|
+| A PDF nyomdai **CMYK képei** invertált színnel jelentek meg | sRGB konverzió az inverzió javításával + webes optimalizálás |
+| A macOS **adatvédelmi zárolása** (Fotók-könyvtár) blokkolta a fotókat | Kerülő út az elérhető másolatokkal és a PDF-ből nyert képekkel |
+| **Hosszú többáras sorok kilógtak** mobilon | Az ár külön sorba tördel, a szöveggel egy vonalban; nulla vízszintes túlcsordulás |
+| **Üres sáv a desktop hero-ban** | A kép a szöveg magasságához igazítva (stretch elrendezés) |
+| **Makacs gyorsítótárak** (favicon, Google-index, Facebook-előnézet, DNS) | Mindegyikre a megfelelő eszköz: új fájlnév, újra-szkennelés, indexelés kérése, terjedés-ellenőrzés |
+
+---
+
+## 9. Záró audit — teljes átvizsgálás
+
+A projekt végén részletes, automatizált + kézi ellenőrzés futott le.
+
+**Rendben találva:** nincs dupla ID vagy törött belső hivatkozás · mind a 62 kép létezik és van alt-szövege · a strukturált adatok érvényesek · a telefonszám mindenhol egyezik · a külső linkek élnek (Wolt is) · nincs placeholder-maradvány · a CSS és a JavaScript szintaktikailag hibátlan · mind az 5 étlap-fül működik, a képnagyító nyílik és Escape-re zár · az űrlap érvényesít · **konzolhiba: nulla** · **túlcsordulás 320 / 390 / 1280 képpontnál, mindkét nyelven: sehol**
+
+**Megtalált és javított hibák:**
+1. Angol nézetben magyar maradt a boroknál („1 790-től" → „from 1 790")
+2. A képnagyító üres `src=""` attribútuma (érvénytelen; egyes böngészők emiatt felesleges kérést indítanak) → átlátszó adat-URI
+3. Elavult `lastmod` dátum a sitemap-ben → frissítve
+
+Mindhárom javítás élesítve és élőben visszaellenőrizve.
+
+---
+
+## 10. Eredmény
+
+- ✅ Élő oldal a **https://khrawpakthai.com** címen, érvényes HTTPS-sel
+- ✅ Kétnyelvű (magyar/angol), teljesen reszponzív, gyors, kézzel írt kód
+- ✅ Teljes étlap árakkal és ételfotókkal az oldalon
+- ✅ Valódi konverziós pontok: Wolt-rendelés, rendezvény-űrlap, kattintható telefon, térkép, élő nyitvatartás-jelzés
+- ✅ SEO-kész: strukturált adat, közösségi előnézet, sitemap, Search Console
+- ✅ Automatikus élesítés: egy `git push` — és pár perc múlva élesben
+
+**Számokban:** 17 commit · 69 fájl · 1 195 sor saját kód (HTML/CSS/JS) · 48 étlap-bélyegkép · 2 nyelv · 0 hiba a záró auditban.
+
+---
+
+## 11. Következő lehetséges lépések
+
+- **Automatikus vélemény-frissítés** — ütemezett GitHub Actions feladat, ami a Google Places API-ból 2 naponta lehúzza a friss értékeléseket, és magától élesíti (egyszeri API-kulcs beállítást igényel; a Google lekérésenként legfeljebb 5 véleményt ad vissza, ezek mindig a legfrissebbek)
+- **Galéria** a teraszos és enteriőr fotókból
+- **Csípősség-skála és diétás jelölések** az étlapon (🌶️ szintek, vegetáriánus / vegán / gluténmentes)
+- **Foodora / további rendelési felületek** kiemelése, ha van
+
+---
+
+*A projekt emberi irányítással, AI-asszisztenciával készült: a vízió, a döntések, a márkahang, a forrásanyagok és az anyanyelvi minőségellenőrzés emberi oldalról érkezett; az AI a kutatást, a kódolást, a képfeldolgozást, az élesítési lépéseket és a gyors iterációt vitte. A lényeg, amit a projekt megmutat: egy ember a megfelelő AI-eszközökkel végponttól végpontig le tud szállítani egy valódi, élő, profi terméket.*

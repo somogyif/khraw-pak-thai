@@ -4,7 +4,9 @@
 
 **A fast, bilingual, SEO-ready website for an authentic Thai + Hungarian fusion restaurant at Heroes' Square, Budapest.**
 
-Hand-coded · No frameworks · Deploy-ready
+No page builder · No frameworks · Zero dependencies
+
+[![Audit](https://github.com/somogyif/khraw-pak-thai/actions/workflows/audit.yml/badge.svg)](https://github.com/somogyif/khraw-pak-thai/actions/workflows/audit.yml)
 
 ![Website preview](docs/preview.png)
 
@@ -55,6 +57,21 @@ Plain **HTML + CSS + JavaScript** — no build step, no framework, no dependenci
 ├── netlify.toml          # deploy config (publish = "site")
 ├── CASE-STUDY.md         # the story behind the build
 └── README.md
+```
+
+## ✅ Quality & security
+
+The site is **static by design** — no database, no user accounts, no secrets in the codebase, zero npm dependencies. That removes most of the attack surface a dynamic app would have.
+
+What is actively enforced:
+
+- **Sanitised translation layer** — the HU/EN switch never injects raw HTML. Content is parsed inside an inert `<template>`, then filtered against a tag allowlist (`br`, `em`, `strong`, `small`, `span`, `b`, `i`) and an attribute allowlist (`class` only). Event handlers, `style`, `href`, `src` and every other tag are stripped.
+- **Security headers** — HSTS, `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy` (see [`netlify.toml`](netlify.toml)).
+- **Automated audit on every push** — 36 checks covering structure, images, SEO, structured data, the contact form, and security regressions.
+
+```bash
+python3 tests/audit.py            # static audit (runs in CI)
+bash tests/live-check.sh          # smoke-test the deployed site
 ```
 
 ## 🚀 Run it locally
