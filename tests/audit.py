@@ -110,6 +110,9 @@ descs_total = len(re.findall(r'<span class="mi-desc"', html))
 descs_en = len(re.findall(r'<span class="mi-desc" data-en', html))
 check(f"minden étlap-leírás fordítható ({descs_en}/{descs_total})", descs_total == descs_en)
 
+check("megvannak a vélemény-blokk jelölői (automatikus frissítéshez)",
+      "REVIEWS:START" in html and "REVIEWS:END" in html)
+
 junk = [w for w in ("lorem", "Weboldal HU", "TODO", "FIXME", "undefined") if w.lower() in html.lower()]
 check("nincs placeholder vagy maradék szöveg", not junk, ", ".join(junk))
 

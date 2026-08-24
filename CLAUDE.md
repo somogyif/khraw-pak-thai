@@ -37,6 +37,10 @@ no database and no payments. Keep it that way unless there is a clear reason not
 5. **Hungarian copy must read as native Hungarian**, not as a translation of the
    English. No truncated fragments as headings, no clumsy word repetition.
 6. **Run `python3 tests/audit.py` before committing.** It must pass.
+7. **The review block is generated.** Everything between `<!-- REVIEWS:START -->`
+   and `<!-- REVIEWS:END -->` in `site/index.html` is maintained by
+   `scripts/update-reviews.py`. Edit the script, not the block — manual edits get
+   overwritten on the next scheduled run.
 
 ## Style
 
