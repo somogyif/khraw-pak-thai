@@ -9,6 +9,8 @@ Friss Google-értékelések beemelése az oldalra.
 Az API-kulcs KIZÁRÓLAG a GOOGLE_MAPS_API_KEY környezeti változóból jön
 (GitHub Actions secret). Soha ne kerüljön a kódba vagy a repóba.
 
+Hetente egyszer fut (a Netlify deploy-keret miatt — lásd CLAUDE.md).
+
 A Google Places API hívásonként legfeljebb 5 véleményt ad vissza — ezek mindig
 a legrelevánsabb/legfrissebb értékelések. A blokk tehát rotál, nem archivál.
 

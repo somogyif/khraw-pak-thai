@@ -130,7 +130,7 @@ A modern restaurant website that does its job:
 - ✅ Continuous deployment — every change goes live with one `git push`
 - ✅ Sanitised rendering layer — the language switch never injects raw HTML
 - ✅ 39 automated checks in CI on every push, plus a pre-commit gate
-- ✅ Self-updating reviews — fresh Google reviews published automatically every two days
+- ✅ Self-updating reviews — fresh Google reviews published automatically every week
 
 From a placeholder-titled builder page to a genuine, conversion-focused restaurant site — grounded in the restaurant's real menu, real reviews, real photos, and a real brand story.
 

@@ -73,7 +73,7 @@ A projekt egy szoros, iteratív körben zajlott: **irány kijelölése → megé
 - **Reszponzív** — mobilon a hero szövege van elöl, a hosszú többáras sorok külön sorba tördelnek
 - **Márkás favicon** — a logó thai templom-emblémájából, több méretben (`favicon.ico` + PNG + apple-touch-icon)
 - **Szűrt fordítási réteg** — a nyelvváltó soha nem szúr be nyers HTML-t: a tartalom inert `<template>`-ben párszolódik, majd tag- és attribútum-engedélyezőlistán megy át. Eseménykezelők, `style`, `href`, `src` és ismeretlen tagek eltávolítva.
-- **Automatikus vélemény-frissítés** — kétnaponta lefutó feladat lehívja a friss Google-értékeléseket, kiszűri az ötcsillagos, érdemi hosszúságúakat, escape-elve beírja őket az oldalba, és csak akkor élesít, ha az audit is átment.
+- **Automatikus vélemény-frissítés** — hetente lefutó feladat lehívja a friss Google-értékeléseket, kiszűri az ötcsillagos, érdemi hosszúságúakat, escape-elve beírja őket az oldalba, és csak akkor élesít, ha az audit is átment.
 
 ---
 
@@ -156,7 +156,7 @@ A kézi átvizsgálás után az egész **beépült a folyamatba**, hogy ne kellj
 - ✅ SEO-kész: strukturált adat, közösségi előnézet, sitemap, Search Console
 - ✅ Automatikus élesítés: egy `git push` — és pár perc múlva élesben
 - ✅ Szűrt renderelés, pre-commit kapu, 39 automatizált ellenőrzés CI-ben
-- ✅ A Google-értékelések kétnaponta maguktól frissülnek
+- ✅ A Google-értékelések hetente maguktól frissülnek
 
 **Számokban:** 25+ commit · 1 300+ sor saját kód (HTML/CSS/JS) · 48 étlap-bélyegkép · 2 nyelv · 39 automatizált ellenőrzés · 0 függőség.
 
