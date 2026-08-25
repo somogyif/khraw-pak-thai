@@ -37,12 +37,17 @@ no database and no payments. Keep it that way unless there is a clear reason not
 5. **Hungarian copy must read as native Hungarian**, not as a translation of the
    English. No truncated fragments as headings, no clumsy word repetition.
 6. **Run `python3 tests/audit.py` before committing.** It must pass.
-7. **The review block is generated.** Everything between `<!-- REVIEWS:START -->`
-   and `<!-- REVIEWS:END -->` in `site/index.html` is maintained by
-   `scripts/update-reviews.py`. Edit the script, not the block — manual edits get
-   overwritten on the next scheduled run. Reviews appear in the language they
-   were written in — Google's API selects language-appropriate reviews rather
-   than translating them. That is deliberate, not a bug.
+7. **The review block is maintained by hand.** Everything between
+   `<!-- REVIEWS:START -->` and `<!-- REVIEWS:END -->` in `site/index.html` is
+   edited manually, with the reviewer's name and a visible link to the Google
+   listing. A scheduled Places-API updater existed and was removed on 2026-08-25:
+   the Maps Platform Terms §3.2.3(a)(iii) name "user reviews" among content that
+   must not be copied or stored, and the Service Specific Terms permit caching
+   only `place_id` and coordinates. **Do not rebuild it.** The sanctioned route,
+   if the restaurant ever wants automation, is the Google Business Profile API —
+   a business reading its own reviews — which needs OAuth and separate approval.
+   Keep quoted review text short and attributed, or drop the quotes and show the
+   rating with a link instead.
 
 8. **Keep the project documents current.** When a change alters what the site
    *is* — a new page, a new capability, a removed feature, a compliance decision —

@@ -50,7 +50,12 @@
   "name": "Khraw Pak Thai",
   "image": "https://khrawpakthai.com/assets/img/hero-padthai.jpg",
   "url": "https://khrawpakthai.com/",
-  "servesCuisine": ["Thai", "Magyar", "Fúziós", "Ázsiai"],
+  "servesCuisine": [
+    "Thai",
+    "Magyar",
+    "Fúziós",
+    "Ázsiai"
+  ],
   "priceRange": "4000–6000 Ft",
   "telephone": "+36706168263",
   "address": {
@@ -60,34 +65,46 @@
     "postalCode": "1068",
     "addressCountry": "HU"
   },
-  "geo": { "@type": "GeoCoordinates", "latitude": 47.5132007, "longitude": 19.0780568 },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 47.5132007,
+    "longitude": 19.0780568
+  },
   "hasMap": "https://maps.app.goo.gl/Sdok5S1uinjLJKB9A",
-  "sameAs": ["https://maps.app.goo.gl/Sdok5S1uinjLJKB9A"],
+  "sameAs": [
+    "https://maps.app.goo.gl/Sdok5S1uinjLJKB9A"
+  ],
   "hasMenu": "https://khrawpakthai.com/#menu",
   "menu": "https://khrawpakthai.com/#menu",
   "acceptsReservations": "True",
   "currenciesAccepted": "HUF",
   "paymentAccepted": "Cash, Credit Card",
   "areaServed": "Budapest",
-  "openingHoursSpecification": [{
-    "@type": "OpeningHoursSpecification",
-    "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
-    "opens": "11:00", "closes": "22:00"
-  }],
-  "award": "Thai SELECT Casual – Royal Thai Government (Ministry of Commerce)",
-  "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.2", "reviewCount": "73" },
-  "potentialAction": [
+  "openingHoursSpecification": [
     {
-      "@type": "OrderAction",
-      "target": "https://wolt.com/hu/hun/budapest/restaurant/khrua-pak-thai",
-      "deliveryMethod": ["http://purl.org/goodrelations/v1#DeliveryModeOwnFleet", "http://purl.org/goodrelations/v1#DeliveryModePickUp"]
-    },
-    {
-      "@type": "ReserveAction",
-      "target": "tel:+36706168263",
-      "result": { "@type": "Reservation", "name": "Asztalfoglalás" }
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday"
+      ],
+      "opens": "11:00",
+      "closes": "22:00"
     }
-  ]
+  ],
+  "award": "Thai SELECT Casual – Royal Thai Government (Ministry of Commerce)",
+  "potentialAction": {
+    "@type": "OrderAction",
+    "target": "https://wolt.com/hu/hun/budapest/restaurant/khrua-pak-thai",
+    "deliveryMethod": [
+      "http://purl.org/goodrelations/v1#DeliveryModeOwnFleet",
+      "http://purl.org/goodrelations/v1#DeliveryModePickUp"
+    ]
+  }
 }
 </script>
 <!-- Strukturált adat: gyakori kérdések -->
@@ -583,6 +600,7 @@
     <div class="section-head center">
       <span class="eyebrow eyebrow-dark">What our guests say</span>
       <h2>4.2 ★ on Google, from 73 reviews</h2>
+      <p class="review-source">Quoted from our Google listing, with the reviewer's name as it appears there.</p>
     </div>
     <div class="review-grid">
       <!-- REVIEWS:START — kézzel karbantartott. Lásd CLAUDE.md: a Places API-ból
