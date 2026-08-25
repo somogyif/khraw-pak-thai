@@ -16,6 +16,24 @@
   --font-body:'Karla',system-ui,sans-serif;
 }
 *{box-sizing:border-box}
+
+/* ===== billentyűzetes fókusz =====
+   Világos háttéren zöld, sötét szekciókban arany gyűrű — mindkettő
+   megüti a WCAG 3:1 kontrasztkövetelményt a saját hátterén. */
+:focus-visible{
+  outline:3px solid var(--green);
+  outline-offset:3px;
+  border-radius:4px;
+}
+.site-header :focus-visible,
+.hero :focus-visible,
+.dishes :focus-visible,
+.contact :focus-visible,
+.site-footer :focus-visible,
+.daily-card :focus-visible,
+.lightbox :focus-visible{
+  outline-color:var(--gold);
+}
 html{scroll-behavior:smooth}
 body{
   margin:0;font-family:var(--font-body);color:var(--text);
@@ -310,7 +328,7 @@ h2{font-size:clamp(1.9rem,4vw,2.9rem)}
 /* ===== lábléc ===== */
 .site-footer{background:var(--green-2);color:#cfc9b8;padding:56px 0 24px}
 .footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:40px}
-.footer-logo{height:56px;margin-bottom:16px}
+.footer-logo{height:56px;width:auto;margin-bottom:16px}
 .footer-brand p{font-size:.92rem;max-width:26em;margin:0}
 .footer-col h4{font-family:var(--font-head);color:var(--gold);font-size:.95rem;margin-bottom:14px;text-transform:uppercase;letter-spacing:.08em}
 .footer-col a,.footer-col span{display:block;color:#cfc9b8;font-size:.94rem;padding:5px 0}
