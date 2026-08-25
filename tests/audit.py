@@ -161,6 +161,24 @@ check("a pre-commit ellenőrzés verziókövetett",
 check("van projektszintű szabályfájl (CLAUDE.md)",
       os.path.exists(os.path.join(ROOT, "CLAUDE.md")))
 
+# ── kétnyelvűség ──────────────────────────────────────────────────────────
+print("\nKétnyelvűség")
+en_path = os.path.join(ROOT, "site", "en", "index.html")
+check("létezik az angol oldal (/en/)", os.path.exists(en_path))
+if os.path.exists(en_path):
+    en = open(en_path, encoding="utf-8").read()
+    hu = read("index.html")
+    for name, page, canon in (("magyar", hu, "https://khrawpakthai.com/"),
+                              ("angol", en, "https://khrawpakthai.com/en/")):
+        alts = re.findall(r'<link rel="alternate" hreflang="([^"]+)" href="([^"]+)"', page)
+        langs = {a[0] for a in alts}
+        check(f"{name} oldal: hreflang hu+en+x-default",
+              langs == {"hu", "en", "x-default"}, str(langs))
+        check(f"{name} oldal: saját canonical",
+              f'rel="canonical" href="{canon}"' in page)
+    check("az angol oldal lang=en", '<html lang="en">' in en)
+    check("az angol oldal generált (nem kézzel írt)", "GENERÁLT FÁJL" in en)
+
 check("nincs npm függőség (nincs package.json)",
       not os.path.exists(os.path.join(ROOT, "package.json")))
 check("nincs eval() vagy document.write()",
