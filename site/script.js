@@ -68,6 +68,23 @@
     document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeLb(); });
   }
 
+  // Térkép betöltése csak kérésre — így a Google addig nem kap adatot,
+  // és nincs szükség cookie-bannerre.
+  var facade = document.getElementById('mapFacade');
+  var mapBtn = document.getElementById('mapLoad');
+  if (facade && mapBtn) {
+    mapBtn.addEventListener('click', function () {
+      var frame = document.createElement('iframe');
+      frame.title = document.documentElement.lang === 'en'
+        ? 'Khraw Pak Thai on the map' : 'Khraw Pak Thai a térképen';
+      frame.src = facade.getAttribute('data-src');
+      frame.loading = 'lazy';
+      frame.referrerPolicy = 'no-referrer-when-downgrade';
+      frame.setAttribute('allowfullscreen', '');
+      facade.replaceWith(frame);
+    });
+  }
+
   // Nyelvváltás (HU alap, EN a data-en attribútumból)
   // Biztonság: a szöveget nem nyers innerHTML-ként szúrjuk be, hanem szűrve.
   // Csak ez a néhány, nem interaktív tag és a class attribútum engedélyezett;

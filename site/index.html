@@ -707,7 +707,14 @@
       <p class="services" data-en="Dine-in · Takeaway · Delivery">Helyben fogyasztás · Elvitel · Házhozszállítás</p>
     </div>
     <div class="contact-map">
-      <iframe title="Khraw Pak Thai a térképen" width="600" height="450" src="https://www.google.com/maps?q=Khraw%20Pak%20Thai%20restaurant%2C%20D%C3%B3zsa%20Gy%C3%B6rgy%20%C3%BAt%2088%2C%20Budapest&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+      <div class="map-facade" id="mapFacade"
+           data-src="https://www.google.com/maps?q=Khraw%20Pak%20Thai%20restaurant%2C%20D%C3%B3zsa%20Gy%C3%B6rgy%20%C3%BAt%2088%2C%20Budapest&amp;output=embed">
+        <span class="map-pin" aria-hidden="true">📍</span>
+        <p class="map-addr">Dózsa György út 88., Budapest 1068</p>
+        <button type="button" class="btn btn-gold btn-sm" id="mapLoad"
+                data-en="Show the map">Térkép megjelenítése</button>
+        <p class="map-note" data-en="The map loads from Google and sets cookies — it only loads if you ask for it.">A térkép a Google-től töltődik be és sütiket használ — csak akkor tölt be, ha kéred.</p>
+      </div>
     </div>
   </div>
 </section>
