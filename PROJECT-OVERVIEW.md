@@ -62,7 +62,10 @@ A notable content-quality detail: a new 5★ review was written in **Swedish**; 
 A single-page site with these sections and capabilities:
 
 - **Hero** — headline, lead, rating badge, Thai SELECT badge, "overlooking Heroes' Square" badge, and an appetizing dish image with a caption chip.
-- **Bilingual HU/EN** — a lightweight `data-en` attribute i18n system with a header toggle, `localStorage` persistence, and `<html lang>` switching. Reviews, form labels, and the live open/closed indicator all localize.
+- **Bilingual on two real URLs** — Hungarian at `/`, English at `/en/`. The English page is *generated* from the Hungarian source by `scripts/build-en.py`, which lifts every `data-en` value into the visible text, so the two languages cannot drift. Reciprocal `hreflang` (hu / en / x-default) and self-referencing canonicals on both, mirrored in the sitemap; the toggle is a real link between the URLs, not a client-side swap.
+- **Accessibility** — visible `:focus-visible` rings for keyboard navigation (green on light sections, gold on dark, both above the WCAG 3:1 threshold); contrast measured across the palette, worst case 5.9:1 against a 4.5 requirement; intrinsic `width`/`height` on every image to prevent layout shift.
+- **Branded 404 page**, bilingual, routing back to the homepage, menu and phone.
+- **Self-hosted fonts** — 14 WOFF2 files served from our own domain with `font-display:swap` and preload on the two critical faces, replacing the Google Fonts CDN (a 2022 Munich ruling held that passing visitor IPs to Google this way breaches the GDPR when self-hosting is available).
 - **Thai SELECT section** — explains the government certification as proof of authenticity.
 - **Daily lunch menu** — highlighted section (weekdays 11:00–14:00, 3 490 Ft), starter/soup + main.
 - **Story** — Thai roots → move next to Heroes' Square → the fusion narrative.

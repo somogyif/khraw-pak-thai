@@ -55,14 +55,16 @@ Rather than inventing anything, we built on **real source material**:
 A modern restaurant website that actually does its job:
 
 - ✅ **Complete, searchable menu** with prices and selective dish photography
-- ✅ **Bilingual** Hungarian / English, one-click toggle
+- ✅ **Bilingual on two indexable URLs** — Hungarian at `/`, English at `/en/`, with reciprocal hreflang; the English page is generated from the Hungarian so they cannot drift
+- ✅ **Accessible** — keyboard focus rings, WCAG-checked contrast, no layout shift
+- ✅ **Self-hosted fonts** and a branded 404 page
 - ✅ **Live "open now / closed"** indicator based on Budapest time
 - ✅ **Real Google reviews** and 4.2★ social proof
 - ✅ **Tappable phone, embedded map, directions**, and a clear brand story
 - ✅ **SEO-ready**: structured data, social previews, semantic markup, sitemap
 - ✅ **Fast & fully responsive** — hand-coded, image-optimised, mobile-first
 - ✅ **One-drag deploy** (Netlify-ready static build)
-- ✅ **Audited, not just shipped** — 39 automated checks in CI, a pre-commit gate that blocks secrets, and a sanitised rendering layer
+- ✅ **Audited, not just shipped** — 46 automated checks in CI, a pre-commit gate that blocks secrets, and a sanitised rendering layer
 - ✅ **Compliance-checked** — fonts self-hosted for GDPR; the Places-API review automation was removed once the Maps Platform terms turned out to forbid caching review text
 
 From a pretty placeholder to a page that answers every question a guest has — and gives them a reason to come in.

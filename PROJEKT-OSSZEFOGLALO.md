@@ -69,7 +69,10 @@ A projekt egy szoros, iteratív körben zajlott: **irány kijelölése → megé
 - **Lábléc** — impresszum (Felba Food Kft., székhely, adószám)
 
 **Technikai megoldások**
-- **Kétnyelvűség (HU/EN)** — saját, könnyű megoldás `data-en` attribútumokkal, fejlécbeli váltóval, a választás megjegyzésével; a vélemények, űrlapmezők és a nyitva-jelző is fordul
+- **Kétnyelvűség (HU/EN) két külön URL-en** — a magyar a `/`, az angol a `/en/` címen. Az angol oldal **generált**: a `scripts/build-en.py` a magyar forrás `data-en` attribútumaiból építi fel, így a két nyelv nem tud szétcsúszni. Kölcsönös `hreflang` (hu / en / x-default) és saját canonical mindkettőn, a sitemapban is leképezve. A nyelvváltó valódi link a két URL között, nem JS-váltás.
+- **Akadálymentesség** — látható fókuszgyűrű billentyűzetes navigációnál (világos szekciókban zöld, sötétben arany, mindkettő a WCAG 3:1 küszöb felett); mért kontrasztok a teljes palettán, a legrosszabb eset 5,9:1 a szükséges 4,5 helyett; minden képen `width`/`height`, hogy ne ugráljon az elrendezés
+- **Márkás 404-oldal** — kétnyelvű, a kezdőlapra, az étlapra és a telefonszámra irányítva
+- **Saját betűtípusok** — a Poppins és a Karla 14 WOFF2 fájlja a saját domainről (`font-display:swap`, preload a két kritikus vágatra). Kiváltotta a Google Fonts CDN-t: a müncheni bíróság 2022-es ítélete szerint a látogató IP-jének Google felé továbbítása GDPR-sértés, mert a self-hosting elérhető alternatíva.
 - **Reszponzív** — mobilon a hero szövege van elöl, a hosszú többáras sorok külön sorba tördelnek
 - **Márkás favicon** — a logó thai templom-emblémájából, több méretben (`favicon.ico` + PNG + apple-touch-icon)
 - **Szűrt fordítási réteg** — a nyelvváltó soha nem szúr be nyers HTML-t: a tartalom inert `<template>`-ben párszolódik, majd tag- és attribútum-engedélyezőlistán megy át. Eseménykezelők, `style`, `href`, `src` és ismeretlen tagek eltávolítva.
@@ -83,6 +86,7 @@ A projekt egy szoros, iteratív körben zajlott: **irány kijelölése → megé
 - **Open Graph + Twitter Card** márkás megosztási képpel (a törött előnézet javítva, a Facebook gyorsítótára frissítve)
 - **Strukturált adat (JSON-LD)**: `Restaurant` (cím, koordináták, nyitvatartás, árkategória, konyha, minősítés) + `AggregateRating` + `FAQPage`
 - Valódi címsor-hierarchia (egy `h1`), **minden képnek alt-szövege**
+- **Kölcsönös `hreflang`** a magyar és az angol oldal között, `x-default`-tal; a `sitemap.xml` mindkét nyelvet felsorolja `xhtml:link` alternate-ekkel
 - `sitemap.xml`, `robots.txt`, **Google Search Console** hitelesítés
 - Sebesség: lazy-load képek, méretezett/tömörített fájlok, `fetchpriority` a hero képen
 
@@ -155,10 +159,10 @@ A kézi átvizsgálás után az egész **beépült a folyamatba**, hogy ne kellj
 - ✅ Valódi konverziós pontok: Wolt-rendelés, rendezvény-űrlap, kattintható telefon, térkép, élő nyitvatartás-jelzés
 - ✅ SEO-kész: strukturált adat, közösségi előnézet, sitemap, Search Console
 - ✅ Automatikus élesítés: egy `git push` — és pár perc múlva élesben
-- ✅ Szűrt renderelés, pre-commit kapu, 39 automatizált ellenőrzés CI-ben
+- ✅ Szűrt renderelés, pre-commit kapu, 46 automatizált ellenőrzés CI-ben
 - ✅ Saját fontok (GDPR), szigorított CSP, kézzel karbantartott vélemény-blokk
 
-**Számokban:** 25+ commit · 1 300+ sor saját kód (HTML/CSS/JS) · 48 étlap-bélyegkép · 2 nyelv · 39 automatizált ellenőrzés · 0 függőség.
+**Számokban:** 40+ commit · 1 300+ sor saját kód (HTML/CSS/JS) · 48 étlap-bélyegkép · 2 nyelv · 46 automatizált ellenőrzés · 0 függőség.
 
 ---
 

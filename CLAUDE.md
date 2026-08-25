@@ -44,6 +44,12 @@ no database and no payments. Keep it that way unless there is a clear reason not
    were written in — Google's API selects language-appropriate reviews rather
    than translating them. That is deliberate, not a bug.
 
+8. **Keep the project documents current.** When a change alters what the site
+   *is* — a new page, a new capability, a removed feature, a compliance decision —
+   update `PROJEKT-OSSZEFOGLALO.md`, `PROJECT-OVERVIEW.md` and `CASE-STUDY.md` in
+   the same commit. They are used for showcasing the work, so a stale document is
+   worse than none. Routine tweaks (copy edits, spacing, a bug fix) do not need it.
+
 ## Style
 
 - Match the existing code: plain ES5-compatible JavaScript in one IIFE, CSS custom
