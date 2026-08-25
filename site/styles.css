@@ -335,6 +335,23 @@ h2{font-size:clamp(1.9rem,4vw,2.9rem)}
 .event-form .btn{width:100%;margin-top:6px}
 .ef-note{text-align:center;font-size:.85rem;color:#8a8468;margin:12px 0 0}
 
+/* ===== jogi oldalak (adatvédelem) ===== */
+.legal{background:var(--cream);padding:64px 0 80px}
+.legal-wrap{max-width:760px}
+.legal h1{color:var(--green);font-size:clamp(1.9rem,4vw,2.6rem);margin-bottom:16px}
+.legal h2{color:var(--green);font-size:1.35rem;margin:38px 0 12px}
+.legal h3{color:var(--green-3);font-size:1.08rem;margin:24px 0 8px}
+.legal p{margin:0 0 14px}
+.legal ul{margin:0 0 16px;padding-left:22px}
+.legal li{margin-bottom:7px}
+.legal a{color:var(--green-3);text-decoration:underline;text-underline-offset:2px}
+.legal a:hover{color:var(--green)}
+.legal code{background:var(--cream-2);padding:1px 6px;border-radius:4px;font-size:.9em}
+.legal-lead{font-size:1.08rem;color:#4a4636}
+.legal-updated{font-size:.85rem;color:#8a8468;margin-bottom:8px}
+.legal-note{background:var(--cream-2);border-left:3px solid var(--gold);padding:14px 18px;border-radius:0 10px 10px 0;font-size:.94rem}
+.legal-back{margin-top:44px}
+
 /* ===== lábléc ===== */
 .site-footer{background:var(--green-2);color:#cfc9b8;padding:56px 0 24px}
 .footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:40px}
