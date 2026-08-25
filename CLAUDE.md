@@ -68,6 +68,16 @@ no database and no payments. Keep it that way unless there is a clear reason not
   and check the console is clean.
 - `bash tests/live-check.sh` smoke-tests the deployed site after a release.
 
+7. **Never cache Google review text.** The Maps Platform Terms §3.2.3(a)(iii)
+   explicitly name "user reviews" among the content that must not be copied or
+   stored, and the Places API Service Specific Terms permit caching only
+   `place_id` and coordinates. An automated Places-API review updater was built
+   and then removed on 2026-08-25 for exactly this reason — do not rebuild it.
+   The review block in `site/index.html` is maintained by hand. If the
+   restaurant ever wants automation, the sanctioned route is the Google
+   Business Profile API (a business accessing its own reviews), which requires
+   OAuth and separate Google approval.
+
 ## Out of scope
 
 Do not add analytics beyond the existing privacy-friendly setup, tracking pixels,
