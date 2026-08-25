@@ -132,7 +132,7 @@ A modern restaurant website that does its job:
 - ✅ SEO-ready: structured data, social previews, sitemap, Search Console
 - ✅ Continuous deployment — every change goes live with one `git push`
 - ✅ Sanitised rendering layer — the language switch never injects raw HTML
-- ✅ 39 automated checks in CI on every push, plus a pre-commit gate
+- ✅ 46 automated checks in CI on every push, plus a pre-commit gate
 - ✅ Self-hosted fonts (GDPR), tightened CSP, hand-maintained review block
 
 From a placeholder-titled builder page to a genuine, conversion-focused restaurant site — grounded in the restaurant's real menu, real reviews, real photos, and a real brand story.
@@ -149,7 +149,7 @@ ship fast and then collapse in production:
 - **Sanitised rendering.** The bilingual switch parses content inside an inert
   `<template>` and filters it against tag and attribute allowlists — verified end to
   end with an XSS fixture, from the data source through to the rendered page.
-- **Automated verification.** 39 checks (structure, images, SEO, structured data,
+- **Automated verification.** 46 checks (structure, images, SEO, structured data,
   form integrity, repo-wide secret scan, and a regression guard on the sanitiser) run
   in CI on every push, with a weekly smoke test against the live site.
 - **A pre-commit gate** blocks any commit carrying a secret or failing the audit.
