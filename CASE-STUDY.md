@@ -64,8 +64,9 @@ A modern restaurant website that actually does its job:
 - ✅ **SEO-ready**: structured data, social previews, semantic markup, sitemap
 - ✅ **Fast & fully responsive** — hand-coded, image-optimised, mobile-first
 - ✅ **One-drag deploy** (Netlify-ready static build)
-- ✅ **Audited, not just shipped** — 46 automated checks in CI, a pre-commit gate that blocks secrets, and a sanitised rendering layer
-- ✅ **Compliance-checked** — fonts self-hosted for GDPR; the Places-API review automation was removed once the Maps Platform terms turned out to forbid caching review text
+- ✅ **Audited, not just shipped** — 47 automated checks in CI, a pre-commit gate that blocks secrets, and a sanitised rendering layer
+- ✅ **Compliance-checked** — bilingual privacy notice, full imprint, fonts self-hosted for GDPR, and a map that loads only when asked, so no cookie banner is needed
+- ✅ **Externally reviewed** — two independent AI models were asked to attack the work; their findings were acted on, including removing structured data that could never have earned anything
 
 From a pretty placeholder to a page that answers every question a guest has — and gives them a reason to come in.
 

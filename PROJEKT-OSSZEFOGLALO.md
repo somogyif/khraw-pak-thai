@@ -66,7 +66,7 @@ A projekt egy szoros, iteratív körben zajlott: **irány kijelölése → megé
 - **Rendezvény-ajánlatkérő űrlap** — Netlify Forms, spam-védelemmel; a kérések e-mailben érkeznek
 - **GYIK** — strukturált adattal (FAQPage)
 - **Kapcsolat** — nyitvatartás **élő „most nyitva / zárva" jelzéssel budapesti idő szerint**, kattintható telefonszám, térkép, útvonalterv, a helyszín bemutatása
-- **Lábléc** — impresszum (Felba Food Kft., székhely, adószám)
+- **Lábléc** — teljes impresszum: cégnév, székhely, cégjegyzékszám, adószám, e-mail, telefon; mellette az adatkezelési tájékoztató linkje
 
 **Technikai megoldások**
 - **Kétnyelvűség (HU/EN) két külön URL-en** — a magyar a `/`, az angol a `/en/` címen. Az angol oldal **generált**: a `scripts/build-en.py` a magyar forrás `data-en` attribútumaiból építi fel, így a két nyelv nem tud szétcsúszni. Kölcsönös `hreflang` (hu / en / x-default) és saját canonical mindkettőn, a sitemapban is leképezve. A nyelvváltó valódi link a két URL között, nem JS-váltás.
@@ -76,6 +76,8 @@ A projekt egy szoros, iteratív körben zajlott: **irány kijelölése → megé
 - **Reszponzív** — mobilon a hero szövege van elöl, a hosszú többáras sorok külön sorba tördelnek
 - **Márkás favicon** — a logó thai templom-emblémájából, több méretben (`favicon.ico` + PNG + apple-touch-icon)
 - **Szűrt fordítási réteg** — a nyelvváltó soha nem szúr be nyers HTML-t: a tartalom inert `<template>`-ben párszolódik, majd tag- és attribútum-engedélyezőlistán megy át. Eseménykezelők, `style`, `href`, `src` és ismeretlen tagek eltávolítva.
+- **Adatkezelési tájékoztató** — kétnyelvű (`/adatvedelem/` és `/en/privacy/`), a láblécből és az űrlap küldés gombja alól linkelve. Tartalmazza az adatkezelő azonosítását, a gyűjtött adatokat, a jogalapot (6. cikk (1) b), majd f) pont), a megőrzési időt kritériummal (12 hónap az utolsó levélváltástól, ha nem lesz szerződés; számviteli bizonylat 8 év), az adatfeldolgozókat és az érintetti jogokat. Allergiát tudatosan **nem kérünk** az űrlapon — telefonon egyeztetjük, így nem tárolunk feleslegesen egészségügyi adatot.
+- **Térkép csak kérésre** — a Google-térkép nem töltődik be magától: egy márkás helyőrző áll a helyén, és csak kattintásra kerül be az iframe. Így a Google addig semmilyen adatot nem kap a látogatóról, és **nincs szükség süti-elfogadó ablakra**: friss betöltéskor mérve nulla süti, nulla iframe; az egyetlen tárolt adat a nyelvválasztás a `localStorage`-ban.
 - **Vélemények kézi karbantartással** — épült egy heti, Places API-alapú automatizmus, de 2026-08-25-én leszereltük: a Maps Platform feltételei nevesítve tiltják a vélemény-szöveg mentését. A blokk mostantól kézzel frissül, escape-elt tartalommal.
 
 ---
@@ -84,7 +86,7 @@ A projekt egy szoros, iteratív körben zajlott: **irány kijelölése → megé
 
 - Beszédes oldalcím és leírás, canonical URL
 - **Open Graph + Twitter Card** márkás megosztási képpel (a törött előnézet javítva, a Facebook gyorsítótára frissítve)
-- **Strukturált adat (JSON-LD)**: `Restaurant` (cím, koordináták, nyitvatartás, árkategória, konyha, minősítés) + `AggregateRating` + `FAQPage`
+- **Strukturált adat (JSON-LD)**: `Restaurant` (cím, koordináták, nyitvatartás, árkategória, konyha, minősítés), `FAQPage` és `OrderAction` a Wolthoz. Az `AggregateRating` és a `ReserveAction` külső értékelés nyomán kikerült: a saját oldalon közölt értékelés a Google szabályai szerint sosem kap csillagot a találatban, a foglalási akció pedig valódi végpont nélkül nem jelent semmit.
 - Valódi címsor-hierarchia (egy `h1`), **minden képnek alt-szövege**
 - **Kölcsönös `hreflang`** a magyar és az angol oldal között, `x-default`-tal; a `sitemap.xml` mindkét nyelvet felsorolja `xhtml:link` alternate-ekkel
 - `sitemap.xml`, `robots.txt`, **Google Search Console** hitelesítés
@@ -124,6 +126,20 @@ A projekt egy szoros, iteratív körben zajlott: **irány kijelölése → megé
 
 ---
 
+## 8b. Külső szakmai ellenőrzés
+
+A saját auditunk után a projektet **két független AI-modellel (Gemini és Grok) is átnézettük**, kifejezetten hibakeresésre kérve őket, nem visszajelzésre. Amit hoztak:
+
+- **A legfontosabb találat nem kódhiba volt.** A Netlify kredit-korlát a *deployt* blokkolja, nem a `git push`-t — 13 commit feleslegesen ült a gépen, ahol sem a CI nem futott rájuk, sem külső szem nem látta őket. Azonnal javítva.
+- **Elfogadott javaslatok:** az `AggregateRating` és a `ReserveAction` kikerült; a megőrzési idő puszta szám helyett indokolt kritériumot kapott; az allergia-kezelés elutasításból pozitív irányítássá vált; `format-detection` meta az iOS-hez; az Egyesült Államokba történő adattovábbítás jogalapja pontosítva (Data Privacy Framework); három gyenge CI-ellenőrzés (puszta szimbólum-létezés) törölve.
+- **Megvitatott, de elutasított javaslat:** a szűrt fordítási réteg eltávolítása. Az egyik modell szerint felesleges, a másik szerint indokolt mélységi védelem — a költsége nulla, ezért maradt.
+- **Két aggály alaptalannak bizonyult:** a 12%-os szervizdíj fel van tüntetve az étlapon, és az `og:image` pontosan 1200×630.
+- **Üzleti tanulság:** mindkét modell ugyanazt mondta — a weboldalon már alig van mit nyerni, a vendégszám a Google Cégprofilon, a Wolton és a budapesti listákon múlik.
+
+Egy találat a kódon kívülről jött: egy **elhagyott Foodora-hirdetés** még élt és indexelt volt, „ZÁRVA" állapottal és elavult árakkal. Ez többet ártott a megtalálhatóságnak, mint bármi a repóban.
+
+---
+
 ## 9. Záró audit — teljes átvizsgálás
 
 A projekt végén részletes, automatizált + kézi ellenőrzés futott le.
@@ -141,7 +157,7 @@ Mindhárom javítás élesítve és élőben visszaellenőrizve.
 
 A kézi átvizsgálás után az egész **beépült a folyamatba**, hogy ne kelljen újra kézzel csinálni:
 
-- **`tests/audit.py` — 39 ellenőrzés** külső függőség nélkül: szerkezet, képek és alt-szövegek, SEO és meta, strukturált adatok érvényessége, űrlap (honeypot, rejtett mező), titok-szivárgás a teljes repóban, valamint regressziós őr a szűrőre — ha valaki visszaírja a nyers beszúrást, a teszt bukik.
+- **`tests/audit.py` — 47 ellenőrzés** külső függőség nélkül: szerkezet, képek és alt-szövegek, SEO és meta, strukturált adatok érvényessége, űrlap (honeypot, rejtett mező), titok-szivárgás a teljes repóban, valamint regressziós őr a szűrőre — ha valaki visszaírja a nyers beszúrást, a teszt bukik.
 - **`tests/live-check.sh`** — az élesített oldal füstpróbája: HTTP/HTTPS, biztonsági fejlécek, sitemap, robots, favicon, átirányítás.
 - **CI** — minden pusholásnál lefut az audit, hetente egyszer pedig az élő oldal ellenőrzése.
 - **Pre-commit kapu** — a commit leáll, ha titok kerülne a kódba vagy bukna az audit. Hamis API-kulccsal tesztelve: blokkolt.
@@ -159,10 +175,10 @@ A kézi átvizsgálás után az egész **beépült a folyamatba**, hogy ne kellj
 - ✅ Valódi konverziós pontok: Wolt-rendelés, rendezvény-űrlap, kattintható telefon, térkép, élő nyitvatartás-jelzés
 - ✅ SEO-kész: strukturált adat, közösségi előnézet, sitemap, Search Console
 - ✅ Automatikus élesítés: egy `git push` — és pár perc múlva élesben
-- ✅ Szűrt renderelés, pre-commit kapu, 46 automatizált ellenőrzés CI-ben
+- ✅ Szűrt renderelés, pre-commit kapu, 47 automatizált ellenőrzés CI-ben
 - ✅ Saját fontok (GDPR), szigorított CSP, kézzel karbantartott vélemény-blokk
 
-**Számokban:** 40+ commit · 1 300+ sor saját kód (HTML/CSS/JS) · 48 étlap-bélyegkép · 2 nyelv · 46 automatizált ellenőrzés · 0 függőség.
+**Számokban:** 40+ commit · 1 300+ sor saját kód (HTML/CSS/JS) · 48 étlap-bélyegkép · 2 nyelv · 47 automatizált ellenőrzés · 0 függőség.
 
 ---
 

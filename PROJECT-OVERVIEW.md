@@ -72,11 +72,13 @@ A single-page site with these sections and capabilities:
 - **"Bold flavours & familiar favourites"** — frames adventurous Thai alongside familiar Hungarian comfort food, with real terrace photos, so mixed groups can share one table.
 - **Popular Thai dishes** — image cards.
 - **Full menu** — category tabs (Thai / Hungarian / Sides / Desserts / Drinks), prices, **selective lazy-loaded dish thumbnails with a click-to-zoom lightbox** (added only to the less-familiar dishes to reassure guests without bloating the page). Multi-protein prices reordered **ascending** (vegetable → chicken → pork → beef → shrimp) for a clean, consistent look.
+- **Privacy notice** — bilingual (`/adatvedelem/`, `/en/privacy/`), linked from the footer and directly under the form's submit button: controller identity, data collected, legal basis, retention with a stated criterion, processors, and data subject rights. Allergies are deliberately *not* collected on the form — they are taken by phone, so no health data is stored unnecessarily.
+- **Map loads only on request** — a branded placeholder stands in for the Google Maps iframe, which is injected on click. Google receives nothing until the visitor asks for it. Measured on a fresh load: zero cookies, zero iframes; the only browser storage is the language preference. No cookie banner is needed.
 - **Reviews** — curated real Google reviews with attribution, HU + EN.
 - **Events / catering inquiry form** — a **Netlify Forms** form (name, email, phone, date, guests, type, message) with honeypot spam protection; submissions email the restaurant.
 - **FAQ** — with **FAQPage** structured data.
 - **Contact** — opening hours with a **live "open now / closed" indicator computed in Budapest time**, tappable phone (`tel:`), Google Maps embed, directions, and a tasteful description of the setting (a 19th-century domed villa overlooking the UNESCO-listed Heroes' Square, steps from Andrássy Avenue, City Park and the Széchenyi Baths).
-- **Footer** — legal impresszum (operator Felba Food Kft., seat, tax number).
+- **Footer** — full imprint: company name, registered seat, company registration number, VAT number, email and phone, alongside a link to the privacy notice.
 - **Branded favicon** — built by extracting the Thai temple emblem from the logo and compositing it on the brand green (replacing the old Canva icon).
 
 ---
@@ -85,7 +87,7 @@ A single-page site with these sections and capabilities:
 
 - Descriptive `<title>` and meta description; `canonical`.
 - **Open Graph + Twitter Card** with a branded `og:image` (fixed the broken social preview; re-scraped via the Facebook Sharing Debugger).
-- **JSON-LD structured data**: `Restaurant` (address, geo, hours, price range, cuisines, `acceptsReservations`, award) + `AggregateRating` + `FAQPage`.
+- **JSON-LD structured data**: `Restaurant` (address, geo, hours, price range, cuisines, award), `FAQPage`, and an `OrderAction` pointing at Wolt. `AggregateRating` and `ReserveAction` were removed after external review — a self-hosted rating can never earn star snippets, and a reserve action without a real endpoint claims something untrue.
 - Semantic headings, descriptive `alt` text throughout.
 - `sitemap.xml`, `robots.txt`, and a **Google Search Console** verification file.
 - Performance-minded: lazy-loaded images, sized/compressed assets, `fetchpriority` on the hero image.
@@ -132,7 +134,7 @@ A modern restaurant website that does its job:
 - ✅ SEO-ready: structured data, social previews, sitemap, Search Console
 - ✅ Continuous deployment — every change goes live with one `git push`
 - ✅ Sanitised rendering layer — the language switch never injects raw HTML
-- ✅ 46 automated checks in CI on every push, plus a pre-commit gate
+- ✅ 47 automated checks in CI on every push, plus a pre-commit gate
 - ✅ Self-hosted fonts (GDPR), tightened CSP, hand-maintained review block
 
 From a placeholder-titled builder page to a genuine, conversion-focused restaurant site — grounded in the restaurant's real menu, real reviews, real photos, and a real brand story.
@@ -149,7 +151,7 @@ ship fast and then collapse in production:
 - **Sanitised rendering.** The bilingual switch parses content inside an inert
   `<template>` and filters it against tag and attribute allowlists — verified end to
   end with an XSS fixture, from the data source through to the rendered page.
-- **Automated verification.** 46 checks (structure, images, SEO, structured data,
+- **Automated verification.** 47 checks (structure, images, SEO, structured data,
   form integrity, repo-wide secret scan, and a regression guard on the sanitiser) run
   in CI on every push, with a weekly smoke test against the live site.
 - **A pre-commit gate** blocks any commit carrying a secret or failing the audit.

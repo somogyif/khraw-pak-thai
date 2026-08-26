@@ -193,12 +193,45 @@ check("nincs nyers innerHTML értékadás (a template inert parsing kivételéve
       not unsafe, ", ".join(unsafe))
 
 # ---------------------------------------------------------------- kód
+print("\nDokumentáció")
+# Kétszer fordult elő, hogy a dokumentumok a kód mögött maradtak — ezért ellenőrzi a CI.
+DOCS = ["README.md", "CASE-STUDY.md", "PROJECT-OVERVIEW.md", "PROJEKT-OSSZEFOGLALO.md"]
+docs_text = {d: open(os.path.join(ROOT, d), encoding="utf-8").read()
+             for d in DOCS if os.path.exists(os.path.join(ROOT, d))}
+
+
+# ne hivatkozzanak törölt dolgokra
+index_html = read("index.html")
+gone = {
+    "update-reviews.py": not os.path.exists(os.path.join(ROOT, "scripts", "update-reviews.py")),
+    "AggregateRating": "AggregateRating" not in index_html,
+    "ReserveAction": "ReserveAction" not in index_html,
+}
+for name, removed_from_code in gone.items():
+    if not removed_from_code:
+        continue
+    mentions = [d for d, t in docs_text.items()
+                if name in t and "eltávolít" not in t[max(0, t.find(name) - 200):t.find(name) + 200]
+                and "removed" not in t[max(0, t.find(name) - 200):t.find(name) + 200]
+                and "kikerült" not in t[max(0, t.find(name) - 200):t.find(name) + 200]]
+    check(f"nincs elavult hivatkozás erre: {name}", not mentions, ", ".join(mentions))
+
 print("\nKód")
 
 check("a CSS zárójelei kiegyensúlyozottak", css.count("{") == css.count("}"),
       f"{css.count('{')} nyitó / {css.count('}')} záró")
 for name, src in (("index.html", html), ("script.js", js)):
     check(f"{name} nem üres", len(src) > 500)
+
+# a dokumentumokban leírt ellenőrzésszám csak a végén hasonlítható a valódihoz
+_total = passes + len(failures) + 1          # +1: ez az ellenőrzés maga
+_stale = []
+for _d, _t in docs_text.items():
+    _nums = [int(m.group(1)) for m in
+             re.finditer(r"\b(\d+)\s+(?:automated checks|checks|automatizált ellenőrzés|ellenőrzés)", _t)]
+    if _nums and _total not in _nums:
+        _stale.append(f"{_d} ({', '.join(map(str, _nums))} ≠ {_total})")
+check("a dokumentumok a valódi ellenőrzésszámot írják", not _stale, "; ".join(_stale))
 
 # ---------------------------------------------------------------- összegzés
 print("\n" + "─" * 52)
