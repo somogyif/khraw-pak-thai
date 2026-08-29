@@ -193,6 +193,9 @@ if os.path.exists(en_path):
               f'rel="canonical" href="{canon}"' in page)
     check("az angol oldal lang=en", '<html lang="en">' in en)
     check("az angol oldal generált (nem kézzel írt)", "GENERÁLT FÁJL" in en)
+    check("az angol oldalon nem maradt fordítatlan data-en",
+          not re.search(r'\sdata-en(?:-[a-z-]+)?="', en),
+          f"{len(re.findall(chr(92)+'sdata-en', en))} maradék")
 
     # A generátor regexe a *legelső* záró taggel fejezi be az elem törzsét, ezért egy
     # azonos nevű beágyazott elem lógó záró taget hagyna a kimenetben. Ma nincs ilyen
@@ -217,6 +220,18 @@ if os.path.exists(en_path):
                 swallowed.append(f"<{m.group('tag')}> elnyeli: <{f_}>")
                 break
     check("a data-en nem nyel el funkcionális elemet", not swallowed, "; ".join(swallowed[:3]))
+
+    # A data-en elemek tartalma betöltéskor átmegy a szűrőn. Ami nincs az
+    # engedélyezett listán, azt a szűrő szöveggé alakítja — így veszett el
+    # korábban az adatvédelmi tájékoztató linkje a renderelt oldalon.
+    _allowed = {"br", "em", "strong", "small", "span", "b", "i", "a"}
+    stripped = []
+    for m in re.finditer(r'<(?P<tag>[a-zA-Z0-9]+)[^>]*?\sdata-en="[^"]*"[^>]*>'
+                         r'(?P<body>.*?)</(?P=tag)>', html, re.S):
+        for t in set(x.lower() for x in re.findall(r"<([a-zA-Z0-9]+)[\s>]", m.group("body"))):
+            if t not in _allowed:
+                stripped.append(f"<{m.group('tag')}> tartalmaz <{t}>-t")
+    check("a data-en tartalma túléli a szűrőt", not stripped, "; ".join(stripped[:3]))
 
     # Ha a generátor mégis elrontaná a szerkezetet, a lógó tag itt bukik ki:
     _tags = ("div", "section", "span", "p", "li", "ul", "blockquote", "article",

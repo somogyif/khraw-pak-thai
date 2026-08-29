@@ -114,8 +114,12 @@
   // Biztonság: a szöveget nem nyers innerHTML-ként szúrjuk be, hanem szűrve.
   // Csak ez a néhány, nem interaktív tag és a class attribútum engedélyezett;
   // minden más (script, eseménykezelő, külső forrás) eltávolításra kerül.
-  var ALLOWED_TAGS = { BR:1, EM:1, STRONG:1, SMALL:1, SPAN:1, B:1, I:1 };
-  var ALLOWED_ATTR = { 'class':1 };
+  // Az <a> azért kell, mert az impresszum és az űrlap-megjegyzés linket tartalmaz —
+  // köztük az adatvédelmi tájékoztatóé. Nélküle a szűrő szöveggé alakította őket.
+  var ALLOWED_TAGS = { BR:1, EM:1, STRONG:1, SMALL:1, SPAN:1, B:1, I:1, A:1 };
+  var ALLOWED_ATTR = { 'class':1, 'href':1, 'target':1, 'rel':1 };
+  // Csak ezek a sémák — a javascript: és data: URL-ek így nem jöhetnek vissza.
+  var SAFE_HREF = /^(?:https?:|mailto:|tel:|[/#])/i;
 
   function sanitizeToFragment(markup){
     var tpl = document.createElement('template');
@@ -129,6 +133,12 @@
             for(var i = child.attributes.length - 1; i >= 0; i--){
               var name = child.attributes[i].name;
               if(!ALLOWED_ATTR[name.toLowerCase()]) child.removeAttribute(name);
+            }
+            if(child.tagName === 'A'){
+              var href = child.getAttribute('href') || '';
+              if(!SAFE_HREF.test(href)) child.removeAttribute('href');
+              // külső ablak esetén a megnyitó oldal ne legyen elérhető
+              if(child.getAttribute('target') === '_blank') child.setAttribute('rel','noopener');
             }
             clean(child);
           } else {                                   // nem engedélyezett tag → csak a szövege marad
@@ -166,7 +176,12 @@
     });
     document.documentElement.lang = (lang === 'en') ? 'en' : 'hu';
     if(langBtn) langBtn.textContent = (lang === 'en') ? 'HU' : 'EN';
-    if(langBtn){ try{ localStorage.setItem('kpt-lang', lang); }catch(e){} }
+    if(langBtn){
+      // Privát módban a setItem dobhat. Ez nem végzetes — a nyelv beállítva marad,
+      // csak nem emlékszünk rá. De ne némán: a konzolban látszódjon.
+      try{ localStorage.setItem('kpt-lang', lang); }
+      catch(e){ if(window.console) console.warn('kpt: a nyelvválasztás nem menthető —', e.name); }
+    }
     updateOpen(lang);
   }
   // Az /en/ oldal önálló, angolul generált dokumentum: ott nincs nyelvváltó gomb,
@@ -174,7 +189,8 @@
   // az angol oldal lang="hu"-t kapna, és a nyitvatartás is magyarul jelenne meg.
   var pageLang = (document.documentElement.lang === 'en') ? 'en' : 'hu';
   if(langBtn){
-    try{ pageLang = localStorage.getItem('kpt-lang') || pageLang; }catch(e){}
+    try{ pageLang = localStorage.getItem('kpt-lang') || pageLang; }
+    catch(e){ if(window.console) console.warn('kpt: a mentett nyelv nem olvasható —', e.name); }
     langBtn.addEventListener('click', function(){
       var next = (document.documentElement.lang === 'en') ? 'hu' : 'en';
       setLang(next);

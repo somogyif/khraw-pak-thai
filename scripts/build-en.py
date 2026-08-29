@@ -71,6 +71,9 @@ def apply_attr_translations(page):
     magyarul mondaná fel az egész képréteget.
     """
     attr_pat = re.compile(r'\sdata-en-(?P<attr>[a-z-]+)="(?P<val>[^"]*)"')
+    # Az idézőjeles értékeket át kell ugrani, különben egy attribútumban álló
+    # '>' korábban lezárná a tagot, és a fordítás némán elmaradna.
+    tag_pat = re.compile(r"""<[a-zA-Z0-9]+(?:"[^"]*"|'[^']*'|[^>"'])*>""")
 
     def repl_tag(m):
         tag = m.group(0)
@@ -79,16 +82,29 @@ def apply_attr_translations(page):
             return tag
         tag = attr_pat.sub("", tag)
         for attr, val in pairs:
-            # a meglévő attribútumot felülírjuk; ha nincs, hozzátesszük
             one = re.compile(r'\s' + re.escape(attr) + r'="[^"]*"')
             if one.search(tag):
                 tag = one.sub(f' {attr}="{val}"', tag, count=1)
             else:
-                tag = tag[:-1].rstrip() + f' {attr}="{val}">'
+                # a záró '>' és az esetleges önzáró '/' elé illesztünk
+                inner = tag[1:-1].rstrip()
+                selfclose = inner.endswith("/")
+                if selfclose:
+                    inner = inner[:-1].rstrip()
+                tag = f'<{inner} {attr}="{val}"' + ("/>" if selfclose else ">")
         return tag
 
-    return re.sub(r"<[a-zA-Z0-9]+[^>]*>", repl_tag, page)
+    page = tag_pat.sub(repl_tag, page)
 
+    # Fail loud: ha bármi fordítatlan maradt, az hiba, nem "majdnem jó".
+    leftover = re.findall(r'\sdata-en(?:-[a-z-]+)?="[^"]*"', page)
+    if leftover:
+        raise SystemExit(
+            "HIBA: a generátor nem tudta alkalmazni ezeket a fordításokat "
+            f"({len(leftover)} db). Valószínű ok: '<' vagy '>' az attribútum "
+            f"értékében. Első: {leftover[0][:90]}"
+        )
+    return page
 
 def build_faq_jsonld(page):
     """A FAQPage struktúrát az immár angol kérdés-válaszokból építi újra."""
