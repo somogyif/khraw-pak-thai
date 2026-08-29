@@ -7,3 +7,4 @@
 # Szerkesztői ideiglenes fájlok
 *.swp
 *~
+.claude/launch.json
