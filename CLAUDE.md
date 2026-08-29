@@ -34,27 +34,26 @@ no database and no payments. Keep it that way unless there is a clear reason not
 3. **Every `<img>` needs a meaningful `alt`.** Menu thumbnails also need `loading="lazy"`.
 4. **Bilingual by default.** New user-facing copy needs a `data-en` attribute.
    Hungarian is the base language in the markup.
+   **`data-en` replaces the element's whole contents, not just its text** — put it
+   on a `<span>` around the text, never on an element that also holds a field, an
+   image or a nested element. Attributes need `data-en-alt` / `data-en-aria-label`.
+   Three separate bugs came from this; the audit now enforces it. See `MISTAKES.md`.
 5. **Hungarian copy must read as native Hungarian**, not as a translation of the
    English. No truncated fragments as headings, no clumsy word repetition.
 6. **Run `python3 tests/audit.py` before committing.** It must pass.
-7. **No review text on the site — the rating only.** Everything between
-   `<!-- REVIEWS:START -->` and `<!-- REVIEWS:END -->` in `site/index.html` shows
-   the Google rating and a link to the listing. **Do not put review text there**,
-   neither pulled from an API nor copied by hand, and never a translation of one.
-   Three separate reasons, any one of which is sufficient:
-   - The Maps Platform Terms §3.2.3(a)(iii) name "user reviews" among content that
-     must not be copied or stored; the Service Specific Terms permit caching only
-     `place_id` and coordinates. A scheduled Places-API updater was built and
-     removed on 2026-08-25 for exactly this. **Do not rebuild it.**
-   - The reviewer owns the copyright to their words. Translating a Hungarian
-     review into English is a derivative work (Szjt. 29. §) we have no right to
-     make or publish.
-   - Commercially it earns little: people check ratings on Google anyway, and
-     self-selected quotes on a restaurant's own page read as marketing.
+7. **No review text on the site — the rating only.** Between
+   `<!-- REVIEWS:START -->` and `<!-- REVIEWS:END -->` goes the Google rating and a
+   link, never review text: not from an API, not copied by hand, never a
+   translation. Any one of these is sufficient on its own:
+   - Maps Platform Terms §3.2.3(a)(iii) forbid copying or storing user reviews;
+     only `place_id` and coordinates may be cached. A Places-API updater was built
+     and removed on 2026-08-25 for this. **Do not rebuild it.**
+   - The reviewer holds the copyright; an English translation of a Hungarian
+     review is a derivative work (Szjt. 29. §) we may not publish.
+   - It earns little — people check ratings on Google anyway.
 
-   The sanctioned route, if the restaurant ever wants review automation, is the
-   Google Business Profile API — a business reading its own reviews — which needs
-   OAuth and separate approval.
+   If automation is ever wanted, the sanctioned route is the Google Business
+   Profile API (a business reading its own reviews): OAuth, separate approval.
 
 8. **Keep the project documents current.** When a change alters what the site
    *is* — a new page, a new capability, a removed feature, a compliance decision —
@@ -70,6 +69,23 @@ no database and no payments. Keep it that way unless there is a clear reason not
   cream `#f6efdf`. Do not introduce new accent colours casually.
 - Avoid the generic AI look: no purple gradients, no glassmorphism, no bento grids.
   The design follows the restaurant's own logo, colours and food photography.
+
+## Errors: fail loud, never fake
+
+Preference order when something cannot be done: it really works → a **visible**
+fallback that says it is degraded → a clear error somebody can fix → **never**
+silent degradation that looks fine and is not.
+
+A signalled fallback is fine; a hidden one costs an afternoon three days later.
+No empty `catch {}`, no invented data standing in for a failed fetch, no reporting
+a step as done when it fell back.
+
+## Mistakes log
+
+`MISTAKES.md` records what broke silently or broke twice: what happened, the root
+cause, and what now prevents it. Newest first. When the same pattern appears
+repeatedly, distil it into a one-line rule above — the log keeps the reasoning so
+the rule does not get undone later by someone who has forgotten why it exists.
 
 ## Workflow
 
