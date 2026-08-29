@@ -60,7 +60,34 @@ def apply_translations(page):
         page, n = pattern.subn(repl, page)
         if not n:
             break
-    return page
+    return apply_attr_translations(page)
+
+
+def apply_attr_translations(page):
+    """A data-en-<attr> értékét a megfelelő attribútumba írja, majd eldobja.
+
+    Az elemek szövegét a data-en fordítja; az attribútumokban (alt, aria-label)
+    álló magyar szöveg enélkül bennmaradna az angol oldalon, és a képernyőolvasó
+    magyarul mondaná fel az egész képréteget.
+    """
+    attr_pat = re.compile(r'\sdata-en-(?P<attr>[a-z-]+)="(?P<val>[^"]*)"')
+
+    def repl_tag(m):
+        tag = m.group(0)
+        pairs = attr_pat.findall(tag)
+        if not pairs:
+            return tag
+        tag = attr_pat.sub("", tag)
+        for attr, val in pairs:
+            # a meglévő attribútumot felülírjuk; ha nincs, hozzátesszük
+            one = re.compile(r'\s' + re.escape(attr) + r'="[^"]*"')
+            if one.search(tag):
+                tag = one.sub(f' {attr}="{val}"', tag, count=1)
+            else:
+                tag = tag[:-1].rstrip() + f' {attr}="{val}">'
+        return tag
+
+    return re.sub(r"<[a-zA-Z0-9]+[^>]*>", repl_tag, page)
 
 
 def build_faq_jsonld(page):

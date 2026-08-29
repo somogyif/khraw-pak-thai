@@ -179,6 +179,42 @@ if os.path.exists(en_path):
     check("az angol oldal lang=en", '<html lang="en">' in en)
     check("az angol oldal generált (nem kézzel írt)", "GENERÁLT FÁJL" in en)
 
+    # A generátor regexe a *legelső* záró taggel fejezi be az elem törzsét, ezért egy
+    # azonos nevű beágyazott elem lógó záró taget hagyna a kimenetben. Ma nincs ilyen
+    # elem; ez az ellenőrzés gondoskodik róla, hogy ne is kerüljön be észrevétlenül.
+    nested = []
+    for m in re.finditer(r'<(?P<tag>[a-zA-Z0-9]+)[^>]*?\sdata-en="[^"]*"[^>]*>(?P<body>.*?)</(?P=tag)>',
+                         html, re.S):
+        if re.search(r"<" + m.group("tag") + r"[\s>]", m.group("body")):
+            nested.append(m.group("tag") + ": " + m.group(0)[:60].replace("\n", " "))
+    check("nincs azonos nevű beágyazott elem data-en attribútumon belül",
+          not nested, "; ".join(nested[:3]))
+
+    # Ha a generátor mégis elrontaná a szerkezetet, a lógó tag itt bukik ki:
+    _tags = ("div", "section", "span", "p", "li", "ul", "blockquote", "article",
+             "main", "footer", "header", "nav", "form", "label", "button", "cite",
+             "h1", "h2", "h3", "h4", "em", "strong", "small", "a")
+    unbalanced = [f"{t}: {o}/{c}" for t in _tags
+                  for o, c in [(len(re.findall(r"<" + t + r"(?=[\s>])", en)),
+                                len(re.findall(r"</" + t + r"\s*>", en)))]
+                  if o != c]
+    check("az angol oldal tagjei kiegyensúlyozottak", not unbalanced, "; ".join(unbalanced))
+
+    # A data-en csak az elemek szövegét fordítja. Az alt és aria-label attribútumban
+    # álló magyar szöveg enélkül bennmaradna az angol oldalon — egy képernyőolvasó
+    # magyarul mondaná fel az egész képréteget. Ezért mindegyikhez kell data-en-*.
+    _huchars = re.compile(r"[őűáéíóúöüÁÉÍÓÚÖÜŐŰ]")
+    missing = []
+    for tag in re.findall(r"<[a-zA-Z0-9]+[^>]*>", html):
+        for attr in ("alt", "aria-label"):
+            m = re.search(r'(?<!-)\b' + attr + r'="([^"]*)"', tag)
+            if not m or not m.group(1).strip():
+                continue
+            if _huchars.search(m.group(1)) and f'data-en-{attr}="' not in tag:
+                missing.append(f"{attr}={m.group(1)[:38]}")
+    check("minden magyar alt/aria-label kapott data-en-* fordítást",
+          not missing, "; ".join(missing[:3]) + (f" (+{len(missing)-3})" if len(missing) > 3 else ""))
+
 check("nincs npm függőség (nincs package.json)",
       not os.path.exists(os.path.join(ROOT, "package.json")))
 check("nincs eval() vagy document.write()",

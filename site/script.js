@@ -81,6 +81,8 @@
       frame.loading = 'lazy';
       frame.referrerPolicy = 'no-referrer-when-downgrade';
       frame.setAttribute('allowfullscreen', '');
+      // A térkép idegen tartalom: csak annyit engedünk neki, amennyi a működéséhez kell.
+      frame.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox');
       facade.replaceWith(frame);
     });
   }
@@ -129,18 +131,31 @@
       if(!el.hasAttribute('data-hu')) el.setAttribute('data-hu', el.innerHTML);
       setHtmlSafely(el, (lang === 'en') ? el.getAttribute('data-en') : el.getAttribute('data-hu'));
     });
+    // Az attribútumokat (alt, aria-label) a data-en nem érinti — külön kell váltani,
+    // különben angol nézetben magyarul maradna a képek szöveges alternatívája.
+    document.querySelectorAll('[alt],[aria-label]').forEach(function(el){
+      ['alt','aria-label'].forEach(function(a){
+        var en = el.getAttribute('data-en-' + a);
+        if(en === null) return;
+        if(!el.hasAttribute('data-hu-' + a)) el.setAttribute('data-hu-' + a, el.getAttribute(a) || '');
+        el.setAttribute(a, (lang === 'en') ? en : el.getAttribute('data-hu-' + a));
+      });
+    });
     document.documentElement.lang = (lang === 'en') ? 'en' : 'hu';
     if(langBtn) langBtn.textContent = (lang === 'en') ? 'HU' : 'EN';
-    try{ localStorage.setItem('kpt-lang', lang); }catch(e){}
+    if(langBtn){ try{ localStorage.setItem('kpt-lang', lang); }catch(e){} }
     updateOpen(lang);
   }
-  var saved = 'hu';
-  try{ saved = localStorage.getItem('kpt-lang') || 'hu'; }catch(e){}
+  // Az /en/ oldal önálló, angolul generált dokumentum: ott nincs nyelvváltó gomb,
+  // és a mentett választás NEM írhatja felül a dokumentum saját nyelvét — különben
+  // az angol oldal lang="hu"-t kapna, és a nyitvatartás is magyarul jelenne meg.
+  var pageLang = (document.documentElement.lang === 'en') ? 'en' : 'hu';
   if(langBtn){
+    try{ pageLang = localStorage.getItem('kpt-lang') || pageLang; }catch(e){}
     langBtn.addEventListener('click', function(){
       var next = (document.documentElement.lang === 'en') ? 'hu' : 'en';
       setLang(next);
     });
   }
-  setLang(saved);
+  setLang(pageLang);
 })();

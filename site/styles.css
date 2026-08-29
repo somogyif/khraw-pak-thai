@@ -263,11 +263,14 @@ h2{font-size:clamp(1.9rem,4vw,2.9rem)}
 /* ===== vélemények ===== */
 .reviews{background:var(--gold)}
 .reviews .section-head h2{color:var(--green-2)}
-.review-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-bottom:44px}
-.review{background:var(--cream);border-radius:var(--radius);padding:26px 24px;margin:0;box-shadow:0 10px 24px rgba(0,0,0,.1)}
-.rstars{color:var(--gold-2);font-size:1.05rem;letter-spacing:2px;margin-bottom:12px}
-.review p{font-size:.96rem;color:#3b382e;margin:0 0 16px}
-.review cite{font-family:var(--font-head);font-weight:600;font-style:normal;color:var(--green)}
+.review-grid{display:grid;place-items:center;margin-bottom:44px}
+.rating-panel{background:var(--cream);border-radius:var(--radius);padding:38px 32px;max-width:620px;
+  box-shadow:0 10px 24px rgba(0,0,0,.1);text-align:center}
+.rating-num{display:block;font-family:var(--font-head);font-weight:800;font-size:3.6rem;line-height:1;color:var(--green)}
+.rating-panel .rstars{font-size:1.5rem;margin:12px 0 4px}
+.star-half{opacity:.35}
+.rating-count{font-size:.95rem;color:#6f6a55;margin:0 0 20px}
+.rating-say{font-size:1.02rem;color:#3b382e;margin:0 auto;max-width:40em}
 
 /* ===== GYIK ===== */
 .faq{background:var(--cream)}
@@ -371,7 +374,6 @@ h2{font-size:clamp(1.9rem,4vw,2.9rem)}
   .ts-emblem{order:-1}
   .usp-grid{grid-template-columns:repeat(2,1fr);gap:22px}
   .dish-grid{grid-template-columns:repeat(2,1fr)}
-  .review-grid{grid-template-columns:repeat(2,1fr)}
   .everyone-grid{grid-template-columns:repeat(2,1fr)}
   .footer-grid{grid-template-columns:1fr 1fr}
 }
@@ -387,10 +389,11 @@ h2{font-size:clamp(1.9rem,4vw,2.9rem)}
   .mi:not(:has(.mi-thumb)) .mi-price{padding-left:0}
 }
 @media(max-width:520px){
-  .usp-grid,.dish-grid,.review-grid,.footer-grid,.everyone-grid,.ef-row,.daily-cols{grid-template-columns:1fr}
+  .usp-grid,.dish-grid,.footer-grid,.everyone-grid,.ef-row,.daily-cols{grid-template-columns:1fr}
   .daily-plus{transform:rotate(90deg);justify-self:center}
   .daily-card{padding:26px}
   .hero .lead{font-size:1rem}
   .footer-bottom{flex-direction:column;gap:8px;text-align:center}
   .footer-bottom .imprint{max-width:none}
 }
+.link-gold{color:var(--gold)}
