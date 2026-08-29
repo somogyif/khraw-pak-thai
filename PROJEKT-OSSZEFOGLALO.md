@@ -157,7 +157,7 @@ Mindhárom javítás élesítve és élőben visszaellenőrizve.
 
 A kézi átvizsgálás után az egész **beépült a folyamatba**, hogy ne kelljen újra kézzel csinálni:
 
-- **`tests/audit.py` — 50 ellenőrzés** külső függőség nélkül: szerkezet, képek és alt-szövegek, SEO és meta, strukturált adatok érvényessége, űrlap (honeypot, rejtett mező), titok-szivárgás a teljes repóban, valamint regressziós őr a szűrőre — ha valaki visszaírja a nyers beszúrást, a teszt bukik.
+- **`tests/audit.py` — 54 ellenőrzés** külső függőség nélkül: szerkezet, képek és alt-szövegek, SEO és meta, strukturált adatok érvényessége, űrlap (honeypot, rejtett mező), titok-szivárgás a teljes repóban, valamint regressziós őr a szűrőre — ha valaki visszaírja a nyers beszúrást, a teszt bukik.
 - **`tests/live-check.sh`** — az élesített oldal füstpróbája: HTTP/HTTPS, biztonsági fejlécek, sitemap, robots, favicon, átirányítás.
 - **CI** — minden pusholásnál lefut az audit, hetente egyszer pedig az élő oldal ellenőrzése.
 - **Pre-commit kapu** — a commit leáll, ha titok kerülne a kódba vagy bukna az audit. Hamis API-kulccsal tesztelve: blokkolt.
@@ -175,10 +175,10 @@ A kézi átvizsgálás után az egész **beépült a folyamatba**, hogy ne kellj
 - ✅ Valódi konverziós pontok: Wolt-rendelés, rendezvény-űrlap, kattintható telefon, térkép, élő nyitvatartás-jelzés
 - ✅ SEO-kész: strukturált adat, közösségi előnézet, sitemap, Search Console
 - ✅ Automatikus élesítés: egy `git push` — és pár perc múlva élesben
-- ✅ Szűrt renderelés, pre-commit kapu, 50 automatizált ellenőrzés CI-ben
+- ✅ Szűrt renderelés, pre-commit kapu, 54 automatizált ellenőrzés CI-ben
 - ✅ Saját fontok (GDPR), szigorított CSP, kézzel karbantartott vélemény-blokk
 
-**Számokban:** 40+ commit · 1 300+ sor saját kód (HTML/CSS/JS) · 48 étlap-bélyegkép · 2 nyelv · 50 automatizált ellenőrzés · 0 függőség.
+**Számokban:** 40+ commit · 1 300+ sor saját kód (HTML/CSS/JS) · 48 étlap-bélyegkép · 2 nyelv · 54 automatizált ellenőrzés · 0 függőség.
 
 ---
 

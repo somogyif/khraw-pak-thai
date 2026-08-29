@@ -64,7 +64,7 @@ A modern restaurant website that actually does its job:
 - ✅ **SEO-ready**: structured data, social previews, semantic markup, sitemap
 - ✅ **Fast & fully responsive** — hand-coded, image-optimised, mobile-first
 - ✅ **One-drag deploy** (Netlify-ready static build)
-- ✅ **Audited, not just shipped** — 50 automated checks in CI, a pre-commit gate that blocks secrets, and a sanitised rendering layer
+- ✅ **Audited, not just shipped** — 54 automated checks in CI, a pre-commit gate that blocks secrets, and a sanitised rendering layer
 - ✅ **Compliance-checked** — bilingual privacy notice, full imprint, fonts self-hosted for GDPR, and a map that loads only when asked, so no cookie banner is needed
 - ✅ **Externally reviewed** — two independent AI models were asked to attack the work; their findings were acted on, including removing structured data that could never have earned anything
 

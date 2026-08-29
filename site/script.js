@@ -55,17 +55,40 @@
   if(lb){
     var lbImg = lb.querySelector('img');
     var lbCap = lb.querySelector('.lb-cap');
+    var lbClose = lb.querySelector('.lb-close');
+    var lastFocused = null;
     function openLb(src, cap){
+      lastFocused = document.activeElement;
       lbImg.src = src; lbImg.alt = cap || '';
       lbCap.textContent = cap || '';
       lb.classList.add('open'); lb.setAttribute('aria-hidden','false');
+      if(lbClose) lbClose.focus();          // a fókusz a panelbe kerül
     }
-    function closeLb(){ lb.classList.remove('open'); lb.setAttribute('aria-hidden','true'); lbImg.src='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'; }
+    function closeLb(){
+      if(!lb.classList.contains('open')) return;
+      lb.classList.remove('open'); lb.setAttribute('aria-hidden','true');
+      lbImg.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+      if(lastFocused && lastFocused.focus) lastFocused.focus();   // vissza oda, ahonnan jött
+    }
+    // A bélyegkép <img>, tehát alapból nem fókuszálható: gombbá tesszük, hogy
+    // billentyűzettel is meg lehessen nyitni. Csak itt, JS-ből — JS nélkül
+    // nincs nagyító, és akkor ne is látsszon gombnak.
     document.querySelectorAll('.mi-thumb').forEach(function(t){
-      t.addEventListener('click', function(){ openLb(t.src, t.getAttribute('data-cap')); });
+      t.setAttribute('role', 'button');
+      t.setAttribute('tabindex', '0');
+      function open(){ openLb(t.getAttribute('data-full') || t.src, t.alt); }
+      t.addEventListener('click', open);
+      t.addEventListener('keydown', function(e){
+        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); open(); }
+      });
     });
     lb.addEventListener('click', function(e){ if(e.target !== lbImg) closeLb(); });
-    document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeLb(); });
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape'){ closeLb(); return; }
+      // Amíg nyitva van, a Tab ne vigye ki a fókuszt a panel mögé.
+      if(e.key === 'Tab' && lb.classList.contains('open')){ e.preventDefault(); if(lbClose) lbClose.focus(); }
+    });
+    if(lbClose) lbClose.addEventListener('click', closeLb);
   }
 
   // Térkép betöltése csak kérésre — így a Google addig nem kap adatot,

@@ -55,7 +55,9 @@ check("pontosan egy <h1> van", len(re.findall(r"<h1[\s>]", html)) == 1)
 # ---------------------------------------------------------------- képek
 print("\nKépek")
 
-srcs = re.findall(r'src="(assets/[^"]+)"', html)
+# a data-full a nagyítóban megnyíló teljes méretű kép — annak is léteznie kell
+srcs = (re.findall(r'src="(assets/[^"]+)"', html)
+        + re.findall(r'data-full="(assets/[^"]+)"', html))
 missing = sorted({s for s in srcs if not os.path.exists(os.path.join(SITE, s))})
 check(f"mind a {len(set(srcs))} hivatkozott kép létezik", not missing, ", ".join(missing))
 
@@ -128,6 +130,19 @@ if form:
     check("honeypot spam-védelem", 'name="bot-field"' in f)
     check("kötelező mezők vannak", f.count("required") >= 2)
 
+    # Az angol űrlap generált — a fenti mezőknek ott is meg kell lenniük.
+    # A honeypot input egyszer már elveszett, mert a data-en a <label> teljes
+    # törzsét lecserélte, és ezt csak a magyar oldalt néző ellenőrzés nem látta.
+    _en_path = os.path.join(SITE, "en", "index.html")
+    _en_src = open(_en_path, encoding="utf-8").read() if os.path.exists(_en_path) else ""
+    _enf = re.search(r"<form\b.*?</form>", _en_src, re.S)
+    _enf = _enf.group(0) if _enf else ""
+    check("az angol űrlapon is ott a form-name", 'name="form-name"' in _enf)
+    check("az angol űrlapon is ott a honeypot", 'name="bot-field"' in _enf)
+    check("az angol űrlapon is ott minden mező",
+          _enf.count("<input") == f.count("<input"),
+          f"angol {_enf.count('<input')} / magyar {f.count('<input')}")
+
 # ---------------------------------------------------------------- biztonság
 print("\nBiztonság")
 
@@ -189,6 +204,19 @@ if os.path.exists(en_path):
             nested.append(m.group("tag") + ": " + m.group(0)[:60].replace("\n", " "))
     check("nincs azonos nevű beágyazott elem data-en attribútumon belül",
           not nested, "; ".join(nested[:3]))
+
+    # A data-en az elem TELJES törzsét lecseréli, tehát minden benne lévő elem
+    # elveszik, hacsak a fordítás vissza nem hozza. Szövegnél ez rendben van,
+    # egy <input>-nál viszont némán megszűnik a mező.
+    _functional = ("input", "select", "textarea", "button", "iframe", "img", "form")
+    swallowed = []
+    for m in re.finditer(r'<(?P<tag>[a-zA-Z0-9]+)[^>]*?\sdata-en="(?P<en>[^"]*)"[^>]*>'
+                         r'(?P<body>.*?)</(?P=tag)>', html, re.S):
+        for f_ in _functional:
+            if re.search(r"<" + f_ + r"[\s>/]", m.group("body")) and f_ not in m.group("en"):
+                swallowed.append(f"<{m.group('tag')}> elnyeli: <{f_}>")
+                break
+    check("a data-en nem nyel el funkcionális elemet", not swallowed, "; ".join(swallowed[:3]))
 
     # Ha a generátor mégis elrontaná a szerkezetet, a lógó tag itt bukik ki:
     _tags = ("div", "section", "span", "p", "li", "ul", "blockquote", "article",

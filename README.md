@@ -88,7 +88,7 @@ Shipping something that works is not the same as shipping something you are allo
 
 ## Quality
 
-- **50 automated checks in CI** ([`tests/audit.py`](tests/audit.py)) — structure and broken anchors, every referenced image existing and carrying alt text, JSON-LD validity, phone-number consistency, form integrity (hidden field and honeypot), hreflang reciprocity, repo-wide secret scanning, and a regression guard on the sanitiser. Dependency-free, so CI needs no install step.
+- **54 automated checks in CI** ([`tests/audit.py`](tests/audit.py)) — structure and broken anchors, every referenced image existing and carrying alt text, JSON-LD validity, phone-number consistency, form integrity (hidden field and honeypot), hreflang reciprocity, repo-wide secret scanning, and a regression guard on the sanitiser. Dependency-free, so CI needs no install step.
 - **Pre-commit gate** ([`.githooks/pre-commit`](.githooks/pre-commit)) — blocks any commit carrying a secret or failing the audit. Verified against a planted fake API key.
 - **Weekly smoke test** ([`tests/live-check.sh`](tests/live-check.sh)) against the deployed site: status, redirects, security headers, sitemap, robots, favicon.
 - **Self-hosted fonts** — 14 WOFF2 files served from our own domain. A 2022 Munich ruling (LG München I, 3 O 17493/20) held that passing a visitor's IP to Google via Google Fonts breaches the GDPR precisely because self-hosting is available. This is an EU business, so the CDN had to go. CSP tightened to `style-src 'self'; font-src 'self'` afterwards.
@@ -108,7 +108,7 @@ site/                  the deployed site (Netlify publish directory)
   assets/img/          14 photos + 48 menu thumbnails
   assets/fonts/        14 self-hosted WOFF2 files
 scripts/build-en.py    generates the English page from the Hungarian
-tests/audit.py         50 checks, no dependencies
+tests/audit.py         54 checks, no dependencies
 tests/live-check.sh    smoke test against production
 .githooks/pre-commit   secret scan + audit before every commit
 netlify.toml           headers, caching, publish directory
@@ -122,7 +122,7 @@ CASE-STUDY.md          the full story, written for a general audience
 git config core.hooksPath .githooks   # enable the pre-commit gate, once
 
 python3 -m http.server 8765 -d site   # serve
-python3 tests/audit.py                # run the 50 checks
+python3 tests/audit.py                # run the 54 checks
 python3 scripts/build-en.py           # regenerate the English page
 bash tests/live-check.sh              # smoke-test production
 ```
