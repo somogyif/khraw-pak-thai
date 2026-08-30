@@ -154,7 +154,7 @@ def generate():
 
     # 3) a nyelvváltó gombból link a magyar oldalra
     page = re.sub(
-        r'<button class="lang-toggle" id="langToggle"[^>]*>.*?</button>',
+        r'<a class="lang-toggle" href="/en/"[^>]*>.*?</a>',
         '<a class="lang-toggle" href="/" hreflang="hu" aria-label="Váltás magyarra / Switch to Hungarian">HU</a>',
         page, count=1, flags=re.S,
     )
