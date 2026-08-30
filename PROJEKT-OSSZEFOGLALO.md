@@ -77,7 +77,7 @@ A projekt egy szoros, iteratív körben zajlott: **irány kijelölése → megé
 - **Márkás favicon** — a logó thai templom-emblémájából, több méretben (`favicon.ico` + PNG + apple-touch-icon)
 - **Szűrt fordítási réteg** — a nyelvváltó soha nem szúr be nyers HTML-t: a tartalom inert `<template>`-ben párszolódik, majd tag- és attribútum-engedélyezőlistán megy át. Eseménykezelők, `style`, `href`, `src` és ismeretlen tagek eltávolítva.
 - **Adatkezelési tájékoztató** — kétnyelvű (`/adatvedelem/` és `/en/privacy/`), a láblécből és az űrlap küldés gombja alól linkelve. Tartalmazza az adatkezelő azonosítását, a gyűjtött adatokat, a jogalapot (6. cikk (1) b), majd f) pont), a megőrzési időt kritériummal (12 hónap az utolsó levélváltástól, ha nem lesz szerződés; számviteli bizonylat 8 év), az adatfeldolgozókat és az érintetti jogokat. Allergiát tudatosan **nem kérünk** az űrlapon — telefonon egyeztetjük, így nem tárolunk feleslegesen egészségügyi adatot.
-- **Térkép csak kérésre** — a Google-térkép nem töltődik be magától: egy márkás helyőrző áll a helyén, és csak kattintásra kerül be az iframe. Így a Google addig semmilyen adatot nem kap a látogatóról, és **nincs szükség süti-elfogadó ablakra**: friss betöltéskor mérve nulla süti, nulla iframe; az egyetlen tárolt adat a nyelvválasztás a `localStorage`-ban.
+- **Térkép csak kérésre** — a Google-térkép nem töltődik be magától: egy márkás helyőrző áll a helyén, és csak kattintásra kerül be az iframe. Így a Google addig semmilyen adatot nem kap a látogatóról, és **nincs szükség süti-elfogadó ablakra**: friss betöltéskor mérve nulla süti, nulla iframe, és **semmi a helyi tárolóban** — a nyelvválasztás 2026-08-30 óta két külön webcím (`/` és `/en/`), nem böngészőben tárolt beállítás.
 - **Vélemények: csak az értékelés, szöveg nélkül** — épült egy heti, Places API-alapú automatizmus, de 2026-08-25-én leszereltük: a Maps Platform feltételei nevesítve tiltják a vélemény-szöveg mentését. A kézzel átmásolt idézetek 2026-08-29-én kerültek le: a vélemény szövege a szerzőjéé, a magyar vélemény angol fordítása pedig származékos mű (Szjt. 29. §). Az oldal az értékelést mutatja és a Google-listára linkel.
 
 ---
@@ -157,7 +157,8 @@ Mindhárom javítás élesítve és élőben visszaellenőrizve.
 
 A kézi átvizsgálás után az egész **beépült a folyamatba**, hogy ne kelljen újra kézzel csinálni:
 
-- **`tests/audit.py` — 56 ellenőrzés** külső függőség nélkül: szerkezet, képek és alt-szövegek, SEO és meta, strukturált adatok érvényessége, űrlap (honeypot, rejtett mező), titok-szivárgás a teljes repóban, valamint regressziós őr a szűrőre — ha valaki visszaírja a nyers beszúrást, a teszt bukik.
+- **`tests/audit.py` — 55 ellenőrzés** külső függőség nélkül, másodperc alatt lefut, a pre-commit kapuban is: szerkezet, képek és alt-szövegek, SEO és meta, strukturált adatok érvényessége, űrlap (honeypot, rejtett mező), titok-szivárgás a teljes repóban, és a kétnyelvűség szerkezeti őrei.
+- **`tests/render-check.py` — 45 ellenőrzés igazi böngészőben**, CI-ban minden push-ra. Ez azt nézi, amit a böngésző *előállít*, nem amit a fájl tartalmaz: a dokumentum nyelvét, a maradék magyar `alt`-okat az angol oldalon, az űrlap épségét, a billentyűzetes elérést, a fókuszkezelést, a nulla sütit és a vízszintes túlcsordulást 320/390/1280 px-en. 2026-08-29-én hét olyan hiba került elő, amit szöveges ellenőrzés elvileg nem láthat — ez a réteg mind a hetet elkapta volna.
 - **`tests/live-check.sh`** — az élesített oldal füstpróbája: HTTP/HTTPS, biztonsági fejlécek, sitemap, robots, favicon, átirányítás.
 - **CI** — minden pusholásnál lefut az audit, hetente egyszer pedig az élő oldal ellenőrzése.
 - **Pre-commit kapu** — a commit leáll, ha titok kerülne a kódba vagy bukna az audit. Hamis API-kulccsal tesztelve: blokkolt.
@@ -175,10 +176,10 @@ A kézi átvizsgálás után az egész **beépült a folyamatba**, hogy ne kellj
 - ✅ Valódi konverziós pontok: Wolt-rendelés, rendezvény-űrlap, kattintható telefon, térkép, élő nyitvatartás-jelzés
 - ✅ SEO-kész: strukturált adat, közösségi előnézet, sitemap, Search Console
 - ✅ Automatikus élesítés: egy `git push` — és pár perc múlva élesben
-- ✅ Szűrt renderelés, pre-commit kapu, 56 automatizált ellenőrzés CI-ben
+- ✅ Szűrt renderelés, pre-commit kapu, 55 automatizált ellenőrzés CI-ben
 - ✅ Saját fontok (GDPR), szigorított CSP, kézzel karbantartott vélemény-blokk
 
-**Számokban:** 40+ commit · 1 300+ sor saját kód (HTML/CSS/JS) · 48 étlap-bélyegkép · 2 nyelv · 56 automatizált ellenőrzés · 0 függőség.
+**Számokban:** 40+ commit · 1 300+ sor saját kód (HTML/CSS/JS) · 48 étlap-bélyegkép · 2 nyelv · 55 automatizált ellenőrzés · 0 függőség.
 
 ---
 

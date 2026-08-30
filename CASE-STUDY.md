@@ -45,7 +45,7 @@ Rather than inventing anything, we built on **real source material**:
 3. **Structured the full menu** from the PDF into a fast, on-page, category-tabbed menu with prices — Thai, Hungarian, sides, desserts and drinks.
 4. **Pulled live data from Google** — real opening hours, the 4.2★ rating, and genuine guest reviews (with attribution).
 5. **Processed 60+ dish photos** extracted from the print-ready PDF — converting them from print colour (CMYK) to web colour (sRGB), then resizing and optimising them so the page stays fast. Added click-to-zoom thumbnails only where they help the guest (the unfamiliar Thai dishes), keeping the page light.
-6. **Built bilingual HU/EN** with a one-click language toggle across the whole site, including translated reviews.
+6. **Built bilingual HU/EN** as two separately indexable pages — Hungarian at `/`, English generated at `/en/` — with reciprocal hreflang and a plain link between them.
 7. **Laid a real SEO foundation** — descriptive title & meta, Open Graph for social sharing, canonical URL, `Restaurant` + review structured data, semantic headings, alt text, sitemap and robots.
 8. **Sharpened the brand story.** Repositioned the narrative around a genuine strength: the restaurant's **Thai SELECT** certification — an official mark from the Royal Thai Government that guarantees authentic Thai cuisine — paired with the honest, welcoming idea that Hungarian classics sit right beside the Thai dishes, so *any* group can share one table.
 9. **Iterated on real feedback** — menu ordering, photography, framing, bilingual details — until it was right.
@@ -64,7 +64,7 @@ A modern restaurant website that actually does its job:
 - ✅ **SEO-ready**: structured data, social previews, semantic markup, sitemap
 - ✅ **Fast & fully responsive** — hand-coded, image-optimised, mobile-first
 - ✅ **One-drag deploy** (Netlify-ready static build)
-- ✅ **Audited, not just shipped** — 56 automated checks in CI, a pre-commit gate that blocks secrets, and a sanitised rendering layer
+- ✅ **Audited, not just shipped** — 55 automated checks in CI, a pre-commit gate that blocks secrets, and a sanitised rendering layer
 - ✅ **Compliance-checked** — bilingual privacy notice, full imprint, fonts self-hosted for GDPR, and a map that loads only when asked, so no cookie banner is needed
 - ✅ **Externally reviewed** — two independent AI models were asked to attack the work; their findings were acted on, including removing structured data that could never have earned anything
 

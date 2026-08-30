@@ -9,6 +9,38 @@ ami **másodszor** fordult elő.
 
 ---
 
+## 2026-08-30 — Az ellenőrzések elvileg nem láthatták a hibákat
+
+**Mi történt.** 2026-08-29-én hét hiba került elő egyszerre. Mind a hét az oldal
+születése óta bent volt (`setLang`, `.hp`, `.mi-thumb`: 2026-08-06; a szűrő:
+2026-08-24). Nem keletkeztek — csak addig senki nem nézett rájuk.
+
+**Gyökérok.** 56 ellenőrzésből **nulla** nyitotta meg az oldalt; mind szövegként
+olvasta a fájlokat. Mind a hét hiba olyan volt, ami csak a renderelt DOM-ban
+látszik: a HTML forrás mindegyiknél helyes volt, a kimenet nem. Ezt nem
+gondossággal lehet megoldani, mert szöveges ellenőrzés *elvileg* nem képes rá,
+akárhány van belőle.
+
+**Egy második ok.** Ugyanazt a fordítást két mechanizmus végezte — a generátor
+build-időben, a `setLang()` futásidőben —, két külön hibakészlettel. A szűrő
+kizárólag a futásidejű ág miatt létezett, és épp ő tette tönkre az adatvédelmi
+linket.
+
+**Megelőzés.**
+- `tests/render-check.py`: 45 ellenőrzés igazi böngészőben, CI-ban minden push-ra.
+  A tegnapi hétből hetet elkapott volna. Első futásán talált egy addig ismeretlen
+  hibát is: 320 px-en a `white-space:nowrap` gombfelirat szétfeszítette az oldalt.
+- A futásidejű nyelvváltó megszűnt: a gomb sima link `/en/`-re. Ezzel eltűnt
+  `setLang`, a szűrő, a `data-hu` árnyékattribútumok és a `localStorage` —
+  83 sor JS és egy egész hibacsalád.
+
+**Amit ebből tanultunk.** Nem több szem kellett, hanem egy olyan ellenőrzés, ami
+másképp néz. Három AI-értékelő vitatkozott a szűrőről; egyik sem vette észre,
+hogy közben elront egy megfelelőségi linket. Egy böngésző, ami megnyitja az
+oldalt, azonnal látta.
+
+---
+
 ## 2026-08-29 — A `data-en` elnyeli az elem törzsét (3. előfordulás → szabály lett)
 
 **Mi történt.** Ugyanaz a gyökérok három különböző álruhában, mind ugyanazon a napon:

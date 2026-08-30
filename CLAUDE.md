@@ -26,11 +26,13 @@ no database and no payments. Keep it that way unless there is a clear reason not
 1. **Never commit secrets.** No API keys, tokens or credentials in the repo, in
    client-side code, or in git history. Anything sensitive belongs in a GitHub
    Actions secret or a Netlify environment variable, used server-side only.
-2. **Never insert untrusted content as raw HTML.** The HU/EN switch in `script.js`
-   routes everything through `sanitizeToFragment()` — an inert `<template>` parse
-   plus a tag allowlist (`br em strong small span b i`) and an attribute allowlist
-   (`class`). Any future dynamic content (e.g. Google reviews pulled from an API)
-   must go through the same path, or through `textContent`.
+2. **No `innerHTML`, ever.** There is no runtime templating left in `script.js` —
+   the two pages are generated, not translated in the browser — so nothing needs
+   to assign HTML. Any future dynamic content goes through `textContent` or
+   `createElement`. The audit fails on any `.innerHTML =` in the file. A sanitiser
+   used to guard this path and silently ate the privacy-notice link for weeks; the
+   path is gone now, and it should stay gone.
+
 3. **Every `<img>` needs a meaningful `alt`.** Menu thumbnails also need `loading="lazy"`.
 4. **Bilingual by default.** New user-facing copy needs a `data-en` attribute.
    Hungarian is the base language in the markup.
@@ -40,7 +42,18 @@ no database and no payments. Keep it that way unless there is a clear reason not
    Three separate bugs came from this; the audit now enforces it. See `MISTAKES.md`.
 5. **Hungarian copy must read as native Hungarian**, not as a translation of the
    English. No truncated fragments as headings, no clumsy word repetition.
-6. **Run `python3 tests/audit.py` before committing.** It must pass.
+6. **Two test layers, and both must pass.**
+   - `python3 tests/audit.py` — 55 checks, no dependencies, runs in a second,
+     wired into the pre-commit hook. Reads the files as text.
+   - `tests/render-check.py` — 45 checks in a real browser, in CI on every push.
+     Reads what the browser actually *produces*.
+
+   The second layer exists because the first one cannot see rendering bugs by
+   construction. Seven of them lived here for three weeks: the English page
+   relabelled itself Hungarian, 36 alt texts stayed Hungarian, a form field
+   vanished, the menu photos were unreachable by keyboard, and the sanitiser
+   quietly ate the privacy-notice link. Every HTML source was correct. **If a bug
+   can only be seen in the rendered page, it belongs in `render-check.py`.**
 7. **No review text on the site — the rating only.** Between
    `<!-- REVIEWS:START -->` and `<!-- REVIEWS:END -->` goes the Google rating and a
    link, never review text: not from an API, not copied by hand, never a

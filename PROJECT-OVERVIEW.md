@@ -134,7 +134,7 @@ A modern restaurant website that does its job:
 - ✅ SEO-ready: structured data, social previews, sitemap, Search Console
 - ✅ Continuous deployment — every change goes live with one `git push`
 - ✅ Sanitised rendering layer — the language switch never injects raw HTML
-- ✅ 56 automated checks in CI on every push, plus a pre-commit gate
+- ✅ 55 automated checks in CI on every push, plus a pre-commit gate
 - ✅ Self-hosted fonts (GDPR), tightened CSP, rating-only review block (no quoted text)
 
 From a placeholder-titled builder page to a genuine, conversion-focused restaurant site — grounded in the restaurant's real menu, real reviews, real photos, and a real brand story.
@@ -151,7 +151,7 @@ ship fast and then collapse in production:
 - **Sanitised rendering.** The bilingual switch parses content inside an inert
   `<template>` and filters it against tag and attribute allowlists — verified end to
   end with an XSS fixture, from the data source through to the rendered page.
-- **Automated verification.** 56 checks (structure, images, SEO, structured data,
+- **Automated verification.** 55 checks (structure, images, SEO, structured data,
   form integrity, repo-wide secret scan, and a regression guard on the sanitiser) run
   in CI on every push, with a weekly smoke test against the live site.
 - **A pre-commit gate** blocks any commit carrying a secret or failing the audit.
@@ -162,7 +162,7 @@ ship fast and then collapse in production:
 
 **Direction & product:** auditing an existing site, defining objectives, brand positioning, content strategy, native-language copy quality control, and iterative review on real screenshots.
 
-**Engineering:** hand-coded semantic HTML/CSS/JS; responsive/mobile-first layout; a small i18n system; interactive components (tabs, lightbox, language toggle, live status); structured data & technical SEO.
+**Engineering:** hand-coded semantic HTML/CSS/JS; responsive/mobile-first layout; a small i18n system; interactive components (tabs, keyboard-accessible lightbox, live open/closed status); structured data & technical SEO.
 
 **Content pipeline:** PDF text/image extraction (poppler), image processing and color-space conversion (Python/Pillow), HEIC conversion (sips), and browser-automation data gathering from Google Maps.
 
