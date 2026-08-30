@@ -48,6 +48,17 @@ no database and no payments. Keep it that way unless there is a clear reason not
    - `tests/render-check.py` — 45 checks in a real browser, in CI on every push.
      Reads what the browser actually *produces*.
 
+   The live site gets the same browser pass weekly in CI
+   (`tests/render-check.py https://khrawpakthai.com`), which is what catches a bad
+   deploy or a drifted Netlify setting.
+
+   Quarterly — or before a campaign, or when the law moves — run the agent sweep:
+   `.claude/workflows/site-sweep.js`. Five lenses (external listings, legal, Hungarian
+   copy, security surface, accessibility), each finding adversarially refuted before it
+   reaches anyone. **Every confirmed finding becomes a check in one of the two layers
+   above**, or the same sweep will keep rediscovering it forever. Not weekly: agents
+   cost money and produce false positives; the two test layers are free and do not.
+
    The second layer exists because the first one cannot see rendering bugs by
    construction. Seven of them lived here for three weeks: the English page
    relabelled itself Hungarian, 36 alt texts stayed Hungarian, a form field

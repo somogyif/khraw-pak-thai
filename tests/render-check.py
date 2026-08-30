@@ -17,7 +17,12 @@ helyes volt, a kimenet nem:
 
 Ez az ellenőrzés mind a hetet elkapta volna.
 
-Futtatás:  python3 tests/render-check.py
+Futtatás:  python3 tests/render-check.py                       (helyi site/ mappa)
+           python3 tests/render-check.py https://khrawpakthai.com  (az élő oldal)
+
+Az élő futtatás azt fogja meg, amit a helyi nem: elrontott deployt, elmozdult
+Netlify-beállítást, lejárt fejléceket. Hetente fut a CI-ban.
+
 Telepítés: python3 -m venv .venv && .venv/bin/pip install playwright
            && .venv/bin/playwright install chromium
 """
@@ -221,8 +226,15 @@ def main():
               f"  {YELLOW}.venv/bin/python tests/render-check.py{RESET}")
         return 2
 
-    httpd, base = serve()
-    print(f"Renderelési ellenőrzés — {base} (site/)")
+    # Argumentumként megadott URL esetén az élő oldalt nézzük, helyi szerver nélkül.
+    external = sys.argv[1].rstrip("/") if len(sys.argv) > 1 else None
+    httpd = None
+    if external:
+        base = external
+        print(f"Renderelési ellenőrzés — {base} (ÉLES)")
+    else:
+        httpd, base = serve()
+        print(f"Renderelési ellenőrzés — {base} (helyi site/)")
     try:
         with sync_playwright() as pw:
             browser = pw.chromium.launch()
@@ -234,7 +246,8 @@ def main():
             check_map_on_request(page, base)
             browser.close()
     finally:
-        httpd.shutdown()
+        if httpd:
+            httpd.shutdown()
 
     print("\n" + "─" * 52)
     if failures:
