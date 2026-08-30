@@ -155,7 +155,10 @@ secret_pat = (r"(api[_-]?key|apikey|secret|passwd|password|private[_-]?key|acces
 skip = {"tests/audit.py", "CLAUDE.md", ".githooks/pre-commit"}
 scanned, hits = 0, []
 for dirpath, dirnames, filenames in os.walk(ROOT):
-    dirnames[:] = [d for d in dirnames if d not in {".git", "node_modules", "__pycache__"}]
+    # A .venv a fejlesztői böngésző-függőség; nem a mi kódunk, és a pip saját
+    # forrásában szerepelnek a keresett minták. A repóba amúgy sem kerül be.
+    dirnames[:] = [d for d in dirnames
+                   if d not in {".git", "node_modules", "__pycache__", ".venv", ".pytest_cache"}]
     for fn in filenames:
         full = os.path.join(dirpath, fn)
         rel = os.path.relpath(full, ROOT)
@@ -221,17 +224,6 @@ if os.path.exists(en_path):
                 break
     check("a data-en nem nyel el funkcionális elemet", not swallowed, "; ".join(swallowed[:3]))
 
-    # A data-en elemek tartalma betöltéskor átmegy a szűrőn. Ami nincs az
-    # engedélyezett listán, azt a szűrő szöveggé alakítja — így veszett el
-    # korábban az adatvédelmi tájékoztató linkje a renderelt oldalon.
-    _allowed = {"br", "em", "strong", "small", "span", "b", "i", "a"}
-    stripped = []
-    for m in re.finditer(r'<(?P<tag>[a-zA-Z0-9]+)[^>]*?\sdata-en="[^"]*"[^>]*>'
-                         r'(?P<body>.*?)</(?P=tag)>', html, re.S):
-        for t in set(x.lower() for x in re.findall(r"<([a-zA-Z0-9]+)[\s>]", m.group("body"))):
-            if t not in _allowed:
-                stripped.append(f"<{m.group('tag')}> tartalmaz <{t}>-t")
-    check("a data-en tartalma túléli a szűrőt", not stripped, "; ".join(stripped[:3]))
 
     # Ha a generátor mégis elrontaná a szerkezetet, a lógó tag itt bukik ki:
     _tags = ("div", "section", "span", "p", "li", "ul", "blockquote", "article",
@@ -249,6 +241,10 @@ if os.path.exists(en_path):
     _huchars = re.compile(r"[őűáéíóúöüÁÉÍÓÚÖÜŐŰ]")
     missing = []
     for tag in re.findall(r"<[a-zA-Z0-9]+[^>]*>", html):
+        # A nyelvváltó címkéje szándékosan kétnyelvű („Váltás angolra / Switch to
+        # English"), hiszen épp annak szól, aki a másik nyelvet keresi.
+        if 'class="lang-toggle"' in tag:
+            continue
         for attr in ("alt", "aria-label"):
             m = re.search(r'(?<!-)\b' + attr + r'="([^"]*)"', tag)
             if not m or not m.group(1).strip():
@@ -264,12 +260,11 @@ check("nincs eval() vagy document.write()",
       not re.search(r"\beval\(|document\.write\(", js))
 
 # a nyelvváltó nem szúrhat be nyers markupot — csak szűrve
-# innerHTML értékadás csak a <template> elemre megengedett: az inert parsing
-# (nem futtat scriptet, nem tölt be külső erőforrást) a sanitizer alapja.
-assigns = re.findall(r"(\w+)\.innerHTML\s*=", js)
-unsafe = [a for a in assigns if a != "tpl"]
-check("nincs nyers innerHTML értékadás (a template inert parsing kivételével)",
-      not unsafe, ", ".join(unsafe))
+# A futásidejű fordítás megszűnt, ezért innerHTML-re egyáltalán nincs szükség.
+# Ez a legerősebb forma: ha nincs értékadás, nincs mibe HTML-t injektálni.
+check("nincs innerHTML értékadás a script.js-ben",
+      not re.search(r"\.innerHTML\s*=", js),
+      ", ".join(re.findall(r"(\w+)\.innerHTML\s*=", js)))
 
 # ---------------------------------------------------------------- kód
 print("\nDokumentáció")

@@ -8,3 +8,4 @@
 *.swp
 *~
 .claude/launch.json
+.venv/

@@ -390,6 +390,8 @@ h2{font-size:clamp(1.9rem,4vw,2.9rem)}
 }
 @media(max-width:520px){
   .usp-grid,.dish-grid,.footer-grid,.everyone-grid,.ef-row,.daily-cols{grid-template-columns:1fr}
+  /* 320 px-en a nowrap gombfelirat szétfeszítette az oldalt — itt tördelhet. */
+  .btn{white-space:normal;text-align:center}
   .daily-plus{transform:rotate(90deg);justify-self:center}
   .daily-card{padding:26px}
   .hero .lead{font-size:1rem}
