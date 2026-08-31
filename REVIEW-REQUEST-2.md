@@ -16,7 +16,7 @@ The code is public: **github.com/somogyif/khraw-pak-thai** — read that rather 
 
 ## The project in one paragraph
 
-Static website (hand-written HTML/CSS/JS, no framework, no build step at deploy, zero npm dependencies) for a Thai–Hungarian fusion restaurant in Budapest, next to Heroes' Square. Hungarian company, so GDPR and ePrivacy apply. No payments, no accounts, no database. Hungarian at `/`, English at `/en/`. Netlify hosting, GitHub CI. Goal: more walk-ins, more Wolt orders, more event enquiries. Built by directing an AI coding assistant; I am not a developer, but I owned every architecture and content decision.
+Static website (plain HTML/CSS/JS, no framework, no build step at deploy, zero npm dependencies) for a Thai–Hungarian fusion restaurant in Budapest, next to Heroes' Square. Hungarian company, so GDPR and ePrivacy apply. No payments, no accounts, no database. Hungarian at `/`, English at `/en/`. Netlify hosting, GitHub CI. Goal: more walk-ins, more Wolt orders, more event enquiries. Built by directing an AI coding assistant; I am not a developer, but I owned every architecture and content decision.
 
 Weight: 7.4 MB deployed, of which 7.0 MB is images (14 photos + 48 menu thumbnails). `index.html` 766 lines, `styles.css` ~400, `script.js` 146.
 

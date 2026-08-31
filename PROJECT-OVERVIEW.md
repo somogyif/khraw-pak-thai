@@ -32,7 +32,7 @@ Good branding, but leaving both guests and search engines without answers.
 
 ## 3. Objectives
 
-1. Rebuild from scratch as a fast, hand-coded, SEO-first static site.
+1. Rebuild from scratch as a fast, framework-free, SEO-first static site.
 2. Put the **full menu with prices** on the site itself.
 3. Make it **bilingual (Hungarian / English)**.
 4. Sharpen the brand story around a real strength: **authentic Thai (Thai SELECT) + Hungarian classics = something for every group**.
@@ -128,13 +128,13 @@ A single-page site with these sections and capabilities:
 A modern restaurant website that does its job:
 
 - ✅ Live on `https://khrawpakthai.com` with valid HTTPS
-- ✅ Bilingual, fully responsive, fast, hand-coded
+- ✅ Bilingual, fully responsive, fast, no framework and no build step
 - ✅ Complete on-page menu with prices and photography
 - ✅ Real conversion paths: ordering, events form, tappable phone, map, live open status
 - ✅ SEO-ready: structured data, social previews, sitemap, Search Console
 - ✅ Continuous deployment — every change goes live with one `git push`
 - ✅ No runtime templating at all — both pages are generated, nothing assigns innerHTML
-- ✅ 59 checks reading the source and 45 checks driving a real browser, on every push
+- ✅ 60 checks reading the source and 45 checks driving a real browser, on every push
 - ✅ Self-hosted fonts (GDPR), tightened CSP, rating-only review block (no quoted text)
 
 From a placeholder-titled builder page to a genuine, conversion-focused restaurant site — grounded in the restaurant's real menu, real reviews, real photos, and a real brand story.
@@ -155,7 +155,7 @@ ship fast and then collapse in production:
   silently converting the privacy-notice link into plain text on every page load.
   The audit now fails on any `innerHTML` assignment — a stronger guarantee than
   filtering, because there is nothing left to filter.
-- **Automated verification, in two layers.** 59 checks reading the files (structure, images, SEO,
+- **Automated verification, in two layers.** 60 checks reading the files (structure, images, SEO,
   structured data, form integrity, repo-wide secret scan) and 45 browser checks that
   assert on the rendered DOM — document language, untranslated attributes, keyboard
   reach, focus handling, zero cookies, horizontal overflow at three widths. Both run
@@ -175,7 +175,7 @@ ship fast and then collapse in production:
 
 **Direction & product:** auditing an existing site, defining objectives, brand positioning, content strategy, native-language copy quality control, and iterative review on real screenshots.
 
-**Engineering:** hand-coded semantic HTML/CSS/JS; responsive/mobile-first layout; a small i18n system; interactive components (tabs, keyboard-accessible lightbox, live open/closed status); structured data & technical SEO.
+**Engineering:** framework-free semantic HTML/CSS/JS; responsive/mobile-first layout; a small i18n system; interactive components (tabs, keyboard-accessible lightbox, live open/closed status); structured data & technical SEO.
 
 **Content pipeline:** PDF text/image extraction (poppler), image processing and color-space conversion (Python/Pillow), HEIC conversion (sips), and browser-automation data gathering from Google Maps.
 

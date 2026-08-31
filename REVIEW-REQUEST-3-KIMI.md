@@ -22,7 +22,7 @@ All of that is fixed in the repo and none of it is deployed. A previous reviewer
 
 ## The project
 
-Static website for a Thai–Hungarian fusion restaurant in Budapest, next to Heroes' Square. Hand-written HTML/CSS/JS, no framework, no build step at deploy, zero npm dependencies. Hungarian company (Felba Food Kft.), so GDPR and ePrivacy apply. No payments, no accounts, no database. Hungarian at `/`, English at `/en/` — the English page is **generated** from the Hungarian source by a Python script. Netlify hosting, GitHub Actions CI. Built by directing an AI coding assistant; I am not a developer, but I owned every architecture and content decision.
+Static website for a Thai–Hungarian fusion restaurant in Budapest, next to Heroes' Square. Plain HTML/CSS/JS, no framework, no build step at deploy, zero npm dependencies. Hungarian company (Felba Food Kft.), so GDPR and ePrivacy apply. No payments, no accounts, no database. Hungarian at `/`, English at `/en/` — the English page is **generated** from the Hungarian source by a Python script. Netlify hosting, GitHub Actions CI. Built by directing an AI coding assistant; I am not a developer, but I owned every architecture and content decision.
 
 Measured today:
 

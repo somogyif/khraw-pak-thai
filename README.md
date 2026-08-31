@@ -88,7 +88,7 @@ Shipping something that works is not the same as shipping something you are allo
 
 ## Quality
 
-- **Two test layers, both in CI.** [`tests/audit.py`](tests/audit.py) — **59 checks** reading the files as text: structure and broken anchors, every referenced image existing and carrying alt text, JSON-LD validity, phone-number consistency, form integrity, hreflang reciprocity, repo-wide secret scanning. Dependency-free, runs in a second, wired into the pre-commit hook.
+- **Two test layers, both in CI.** [`tests/audit.py`](tests/audit.py) — **60 checks** reading the files as text: structure and broken anchors, every referenced image existing and carrying alt text, JSON-LD validity, phone-number consistency, form integrity, hreflang reciprocity, repo-wide secret scanning. Dependency-free, runs in a second, wired into the pre-commit hook.
 - **[`tests/render-check.py`](tests/render-check.py) — 45 checks in a real browser**, because the first layer cannot see rendering bugs by construction. Seven of them lived here for three weeks with correct HTML source: the English page relabelled itself Hungarian at runtime, 36 alt texts stayed Hungarian, a form field vanished from the generated page, the menu photos were unreachable by keyboard, and a sanitiser silently ate the privacy-notice link. This layer asserts on the rendered DOM — document language, leftover Hungarian in attributes, links that are actually links, keyboard reach and focus return, zero cookies, no horizontal overflow at 320/390/1280. It runs against the live site weekly, which is what catches a bad deploy rather than bad code.
 - **Pre-commit gate** ([`.githooks/pre-commit`](.githooks/pre-commit)) — blocks any commit carrying a secret or failing the audit. Verified against a planted fake API key.
 - **Weekly smoke test** ([`tests/live-check.sh`](tests/live-check.sh)) against the deployed site: status, redirects, security headers, sitemap, robots, favicon.
@@ -110,7 +110,7 @@ site/                  the deployed site (Netlify publish directory)
   assets/img/          14 photos + 48 menu thumbnails
   assets/fonts/        14 self-hosted WOFF2 files
 scripts/build-en.py    generates the English page from the Hungarian
-tests/audit.py         59 checks, no dependencies
+tests/audit.py         60 checks, no dependencies
 tests/render-check.py  45 checks in a real browser
 tests/live-check.sh    smoke test against production
 .githooks/pre-commit   secret scan + audit before every commit

@@ -8,7 +8,7 @@
 
 I took **Khraw Pak Thai**, an authentic Thai bistro (with Hungarian classics) at Heroes' Square in Budapest, and rebuilt its website from the ground up. The original looked nice but was missing the essentials a hungry guest actually needs — a real menu, opening hours, reviews, and a reason to click "order."
 
-The result: a **hand-coded, bilingual (HU/EN), SEO-ready, fully responsive** site with the complete menu, live Google data, real guest reviews, dish photography, and a clear brand story — ready to deploy in one drag-and-drop.
+The result: a **bilingual (HU/EN), SEO-ready, fully responsive** site — plain HTML, CSS and JavaScript, no page builder and no framework — with the complete menu, the live Google rating, dish photography, and a clear brand story — ready to deploy in one drag-and-drop.
 
 I want to be transparent about *how* it was made: I drove the vision, the decisions, the content and the brand voice — and I did it **in collaboration with an AI coding assistant (Claude Code)** that handled the research, the code, the image processing and the fast iteration. Modern building, modern tools.
 
@@ -41,7 +41,7 @@ Rather than inventing anything, we built on **real source material**:
 ## How we did it
 
 1. **Audit first.** Started with an honest breakdown of what was helping and what was hurting — SEO, usability, and the conversion funnel.
-2. **Rebuilt from scratch**, hand-coded (HTML / CSS / JavaScript) instead of a page builder — for speed, control and clean SEO.
+2. **Rebuilt from scratch** as plain HTML / CSS / JavaScript instead of a page builder — for speed, control and clean SEO. Written with Claude Code, directed decision by decision.
 3. **Structured the full menu** from the PDF into a fast, on-page, category-tabbed menu with prices — Thai, Hungarian, sides, desserts and drinks.
 4. **Pulled live data from Google** — real opening hours, the 4.2★ rating, and genuine guest reviews (with attribution).
 5. **Processed 60+ dish photos** extracted from the print-ready PDF — converting them from print colour (CMYK) to web colour (sRGB), then resizing and optimising them so the page stays fast. Added click-to-zoom thumbnails only where they help the guest (the unfamiliar Thai dishes), keeping the page light.
@@ -62,9 +62,9 @@ A modern restaurant website that actually does its job:
 - ✅ **Real Google reviews** and 4.2★ social proof
 - ✅ **Tappable phone, embedded map, directions**, and a clear brand story
 - ✅ **SEO-ready**: structured data, social previews, semantic markup, sitemap
-- ✅ **Fast & fully responsive** — hand-coded, image-optimised, mobile-first
+- ✅ **Fast & fully responsive** — no framework, image-optimised, mobile-first
 - ✅ **One-drag deploy** (Netlify-ready static build)
-- ✅ **Audited, not just shipped** — two test layers: 59 checks reading the source, and 45 checks driving a real browser. The second layer exists because seven bugs survived three weeks and three external reviews with perfectly correct HTML
+- ✅ **Audited, not just shipped** — two test layers: 60 checks reading the source, and 45 checks driving a real browser. The second layer exists because seven bugs survived three weeks and three external reviews with perfectly correct HTML
 - ✅ **Compliance-checked** — bilingual privacy notice, full imprint, fonts self-hosted for GDPR, and a map that loads only when asked, so no cookie banner is needed
 - ✅ **Externally reviewed** — three independent AI models were asked to attack the work across three rounds. Roughly ten real findings were acted on, and six false ones were measured and rejected — including a claim that the menu was images-only when it is text, and that images lacked dimensions when every one has them
 

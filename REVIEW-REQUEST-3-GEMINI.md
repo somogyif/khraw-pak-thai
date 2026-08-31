@@ -32,7 +32,7 @@ Code is public: **github.com/somogyif/khraw-pak-thai**
 
 ## The project in one paragraph
 
-Static website for a Thai–Hungarian fusion restaurant in Budapest, next to Heroes' Square. Hand-written HTML/CSS/JS, no framework, no build step at deploy, zero npm dependencies. Hungarian company (Felba Food Kft.), so GDPR and ePrivacy apply. No payments, no accounts, no database, no backend of ours. Hungarian at `/`, English at `/en/`. Netlify hosting, GitHub Actions CI. Built by directing an AI coding assistant; I am not a developer, but I owned every architecture and content decision.
+Static website for a Thai–Hungarian fusion restaurant in Budapest, next to Heroes' Square. Plain HTML/CSS/JS, no framework, no build step at deploy, zero npm dependencies. Hungarian company (Felba Food Kft.), so GDPR and ePrivacy apply. No payments, no accounts, no database, no backend of ours. Hungarian at `/`, English at `/en/`. Netlify hosting, GitHub Actions CI. Built by directing an AI coding assistant; I am not a developer, but I owned every architecture and content decision.
 
 **Current measurements** (taken today, not from memory):
 

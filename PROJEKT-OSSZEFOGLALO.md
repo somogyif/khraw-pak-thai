@@ -163,7 +163,7 @@ Mindhárom javítás élesítve és élőben visszaellenőrizve.
 
 A kézi átvizsgálás után az egész **beépült a folyamatba**, hogy ne kelljen újra kézzel csinálni:
 
-- **`tests/audit.py` — 59 ellenőrzés** külső függőség nélkül, másodperc alatt lefut, a pre-commit kapuban is: szerkezet, képek és alt-szövegek, SEO és meta, strukturált adatok érvényessége, űrlap (honeypot, rejtett mező), titok-szivárgás a teljes repóban, és a kétnyelvűség szerkezeti őrei.
+- **`tests/audit.py` — 60 ellenőrzés** külső függőség nélkül, másodperc alatt lefut, a pre-commit kapuban is: szerkezet, képek és alt-szövegek, SEO és meta, strukturált adatok érvényessége, űrlap (honeypot, rejtett mező), titok-szivárgás a teljes repóban, és a kétnyelvűség szerkezeti őrei.
 - **`tests/render-check.py` — 45 ellenőrzés igazi böngészőben**, CI-ban minden push-ra. Ez azt nézi, amit a böngésző *előállít*, nem amit a fájl tartalmaz: a dokumentum nyelvét, a maradék magyar `alt`-okat az angol oldalon, az űrlap épségét, a billentyűzetes elérést, a fókuszkezelést, a nulla sütit és a vízszintes túlcsordulást 320/390/1280 px-en. 2026-08-29-én hét olyan hiba került elő, amit szöveges ellenőrzés elvileg nem láthat — ez a réteg mind a hetet elkapta volna.
 - **`tests/live-check.sh`** — az élesített oldal füstpróbája: HTTP/HTTPS, biztonsági fejlécek, sitemap, robots, favicon, átirányítás.
 - **CI** — minden pusholásnál lefut mindkét tesztréteg. Hetente egyszer ugyanaz a böngészős kör **az élesített oldalon** is végigmegy (`tests/render-check.py https://khrawpakthai.com`) — ez fogja meg az elrontott deployt vagy az elmozdult Netlify-beállítást, amit a helyi futás soha nem látna.
@@ -198,7 +198,7 @@ A `CLAUDE.md` 2. szabálya ennek megfelelően szigorodott: **`innerHTML` érték
 ## 10. Eredmény
 
 - ✅ Élő oldal a **https://khrawpakthai.com** címen, érvényes HTTPS-sel
-- ✅ Kétnyelvű (magyar/angol), teljesen reszponzív, gyors, kézzel írt kód
+- ✅ Kétnyelvű (magyar/angol), teljesen reszponzív, gyors — keretrendszer és build lépés nélkül
 - ✅ Teljes étlap árakkal és ételfotókkal az oldalon
 - ✅ Valódi konverziós pontok: Wolt-rendelés, rendezvény-űrlap, kattintható telefon, térkép, élő nyitvatartás-jelzés
 - ✅ SEO-kész: strukturált adat, közösségi előnézet, sitemap, Search Console

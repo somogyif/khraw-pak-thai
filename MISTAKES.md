@@ -9,6 +9,35 @@ ami **másodszor** fordult elő.
 
 ---
 
+## 2026-08-31 — „Hand-coded" — másodszor csúszott vissza egy valótlan állítás
+
+**Mi történt.** A showcase-dokumentumok hét helyen állították, hogy az oldal
+„hand-coded" / „kézzel írt kód". Nem az: Claude Code-dal készült, emberi
+irányítással. A tulajdonos ezt **már korábban is szóvá tette**, akkor kijavítottuk,
+és azóta visszakúszott.
+
+Ráadásul a dokumentumok **önmaguknak mondtak ellent**: a `PROJEKT-OSSZEFOGLALO.md`
+záró bekezdése kimondja, hogy AI-asszisztenciával készült, a review-kérések pedig
+két mondattal a „hand-written" után írják le, hogy „built by directing an AI coding
+assistant".
+
+**Gyökérok.** A javítás egyszeri szövegcsere volt, nem szabály. Egy állítás, amit
+semmi nem ellenőriz, visszakerül, amikor a szöveget legközelebb átírják — különösen,
+ha jól hangzik.
+
+**Miért számít.** Ezek nem belső jegyzetek, hanem bemutatkozó anyagok. Egy valótlan
+állítás bennük nem stílushiba, hanem hitelességi kockázat — és pont az ellenkezőjét
+éri el annak, amit a projekt bizonyítani akar: hogy egy ember a megfelelő
+AI-eszközökkel végponttól végpontig le tud szállítani egy valódi terméket.
+
+**Megelőzés.** Audit-ellenőrzés, ami minden gyökérszintű `.md` fájlban bukik a
+`hand-coded`, `hand-written HTML/CSS/JS` és `kézzel írt kód` mintákra, megnevezve a
+fájlt és a talált szövegrészt. A legitim használatot (`srcset` kézzel írása, „ne
+szerkeszd kézzel a generált oldalt", „kézzel átmásolt vélemény") nem érinti.
+Szándékos regresszióval tesztelve.
+
+---
+
 ## 2026-08-30 — Az ellenőrzések elvileg nem láthatták a hibákat
 
 **Mi történt.** 2026-08-29-én hét hiba került elő egyszerre. Mind a hét az oldal

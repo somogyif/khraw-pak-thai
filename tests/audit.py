@@ -305,6 +305,23 @@ undocumented = [f for f in sorted(os.listdir(os.path.join(ROOT, "tests")))
                 if f.endswith((".py", ".sh")) and f not in readme]
 check("a README minden tesztfájlt említ", not undocumented, ", ".join(undocumented))
 
+# Az oldal Claude Code-dal készült, emberi irányítással. A "hand-coded" állítás
+# valótlan, és ellentmond a dokumentumok saját záró bekezdésének. Egyszer már
+# kikerült, aztán visszakúszott — ezért ellenőrzés, nem emlékezet. L. MISTAKES.md.
+_false_claim = re.compile(
+    r"hand-?\s?cod|kézzel\s+írt\s+(kód|html|css)|hand-?written\s+(html|css|js|code|site)",
+    re.I)
+_claims = []
+for _f in sorted(f for f in os.listdir(ROOT) if f.endswith(".md")):
+    _t = open(os.path.join(ROOT, _f), encoding="utf-8").read()
+    # a MISTAKES.md maga rögzíti a hibát, ezért benne szerepelhet
+    if _f == "MISTAKES.md":
+        continue
+    _m = _false_claim.search(_t)
+    if _m:
+        _claims.append(f"{_f}: „{_m.group(0)}”")
+check("egyik dokumentum sem állítja, hogy kézzel írt kód", not _claims, "; ".join(_claims))
+
 print("\nKód")
 
 check("a CSS zárójelei kiegyensúlyozottak", css.count("{") == css.count("}"),
