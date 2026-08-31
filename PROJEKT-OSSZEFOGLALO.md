@@ -126,17 +126,23 @@ A projekt egy szoros, iteratív körben zajlott: **irány kijelölése → megé
 
 ---
 
-## 8b. Külső szakmai ellenőrzés
+## 8b. Külső szakmai ellenőrzés — három kör, három modell
 
-A saját auditunk után a projektet **két független AI-modellel (Gemini és Grok) is átnézettük**, kifejezetten hibakeresésre kérve őket, nem visszajelzésre. Amit hoztak:
+A saját auditunk után a projektet **három független AI-modellel (Gemini, Grok, Kimi) néztük át**, három körben, kifejezetten hibakeresésre kérve őket, nem visszajelzésre.
 
-- **A legfontosabb találat nem kódhiba volt.** A Netlify kredit-korlát a *deployt* blokkolja, nem a `git push`-t — 13 commit feleslegesen ült a gépen, ahol sem a CI nem futott rájuk, sem külső szem nem látta őket. Azonnal javítva.
-- **Elfogadott javaslatok:** az `AggregateRating` és a `ReserveAction` kikerült; a megőrzési idő puszta szám helyett indokolt kritériumot kapott; az allergia-kezelés elutasításból pozitív irányítássá vált; `format-detection` meta az iOS-hez; az Egyesült Államokba történő adattovábbítás jogalapja pontosítva (Data Privacy Framework); három gyenge CI-ellenőrzés (puszta szimbólum-létezés) törölve.
-- **Megvitatott, de elutasított javaslat:** a szűrt fordítási réteg eltávolítása. Az egyik modell szerint felesleges, a másik szerint indokolt mélységi védelem — a költsége nulla, ezért maradt.
-- **Két aggály alaptalannak bizonyult:** a 12%-os szervizdíj fel van tüntetve az étlapon, és az `og:image` pontosan 1200×630.
-- **Üzleti tanulság:** mindkét modell ugyanazt mondta — a weboldalon már alig van mit nyerni, a vendégszám a Google Cégprofilon, a Wolton és a budapesti listákon múlik.
+**Amit hoztak, és elfogadtuk:**
+- **A legfontosabb találat nem kódhiba volt.** A Netlify kredit-korlát a *deployt* blokkolja, nem a `git push`-t — 13 commit feleslegesen ült a gépen, ahol sem a CI nem futott rájuk, sem külső szem nem látta őket.
+- **Egy elhagyott Foodora-listázás** még élt és indexelt volt, „ZÁRVA" állapottal és a költözés előtti címmel. Ez többet ártott a megtalálhatóságnak, mint bármi a repóban.
+- **A Google-listázás a szomszédos szálloda alatt** jelenítette meg az éttermet, holott az önálló, saját bejárattal.
+- **Az űrlap „elfogadod a tájékoztatót" szövege jogilag hibás volt:** a tájékoztató a GDPR 13. cikk szerint információ, nem szerződés; az elfogadás hozzájárulást sugall, miközben a jogalap szerződéskötést megelőző lépés. Sima utalásra cserélve.
+- **Az impresszumból hiányzott a tárhelyszolgáltató**, amit az Ekertv. 4. § h) 2014 óta kötelezővé tesz. Kételkedtünk benne, utánanéztünk a jogszabálynak, és az értékelőnek volt igaza.
+- **A vélemény-idézetek lekerültek.** A döntő érv olyan volt, amit két korábbi kör nem hozott fel: egy magyar vélemény angol fordítása származékos mű (Szjt. 29. §), amit nincs jogunk közzétenni.
+- **Akadálymentességi hibák:** a 48 étlapfotó billentyűzettel megnyithatatlan volt, a honeypot mező pedig képernyőolvasóval elérhető.
+- **Teljesítmény:** három fotó PNG-ként volt tárolva, a bélyegképek pedig 720 px-esek egy 62 px-es helyre. A teljes oldal képsúlya ~3,5 MB-ról **717 KB-ra** csökkent.
 
-Egy találat a kódon kívülről jött: egy **elhagyott Foodora-hirdetés** még élt és indexelt volt, „ZÁRVA" állapottal és elavult árakkal. Ez többet ártott a megtalálhatóságnak, mint bármi a repóban.
+**Amit elutasítottunk, méréssel:** hat állítás tényszerűen hamisnak bizonyult — hogy hiányoznak a képméretek (mind a 62-n rajta vannak), hogy az étlap csak kép (61 ételnév és ár szövegként), hogy nincs `autocomplete` (van, mindhárom releváns mezőn), hogy a JSON-LD törékeny (mindkét oldalon érvényes), és két túlzás a teljesítményről.
+
+**A legfontosabb tanulság viszont nem az értékelőktől jött.** A két legsúlyosabb hibát az találta meg, hogy *ellenőriztük az állításaikat* — és hetet az, hogy egyszer csak megnyitottuk az oldalt egy böngészőben. Három modell vitatkozott arról, hogy a szűrt renderelési réteg „biztonsági színház"-e; **egyik sem vette észre, hogy közben hetek óta szöveggé alakítja az adatvédelmi tájékoztató linkjét.** Ez vezetett a második tesztréteghez (l. 9. pont) és az architektúra egyszerűsítéséhez (l. 9b).
 
 ---
 
@@ -157,14 +163,35 @@ Mindhárom javítás élesítve és élőben visszaellenőrizve.
 
 A kézi átvizsgálás után az egész **beépült a folyamatba**, hogy ne kelljen újra kézzel csinálni:
 
-- **`tests/audit.py` — 55 ellenőrzés** külső függőség nélkül, másodperc alatt lefut, a pre-commit kapuban is: szerkezet, képek és alt-szövegek, SEO és meta, strukturált adatok érvényessége, űrlap (honeypot, rejtett mező), titok-szivárgás a teljes repóban, és a kétnyelvűség szerkezeti őrei.
+- **`tests/audit.py` — 59 ellenőrzés** külső függőség nélkül, másodperc alatt lefut, a pre-commit kapuban is: szerkezet, képek és alt-szövegek, SEO és meta, strukturált adatok érvényessége, űrlap (honeypot, rejtett mező), titok-szivárgás a teljes repóban, és a kétnyelvűség szerkezeti őrei.
 - **`tests/render-check.py` — 45 ellenőrzés igazi böngészőben**, CI-ban minden push-ra. Ez azt nézi, amit a böngésző *előállít*, nem amit a fájl tartalmaz: a dokumentum nyelvét, a maradék magyar `alt`-okat az angol oldalon, az űrlap épségét, a billentyűzetes elérést, a fókuszkezelést, a nulla sütit és a vízszintes túlcsordulást 320/390/1280 px-en. 2026-08-29-én hét olyan hiba került elő, amit szöveges ellenőrzés elvileg nem láthat — ez a réteg mind a hetet elkapta volna.
 - **`tests/live-check.sh`** — az élesített oldal füstpróbája: HTTP/HTTPS, biztonsági fejlécek, sitemap, robots, favicon, átirányítás.
-- **CI** — minden pusholásnál lefut az audit, hetente egyszer pedig az élő oldal ellenőrzése.
+- **CI** — minden pusholásnál lefut mindkét tesztréteg. Hetente egyszer ugyanaz a böngészős kör **az élesített oldalon** is végigmegy (`tests/render-check.py https://khrawpakthai.com`) — ez fogja meg az elrontott deployt vagy az elmozdult Netlify-beállítást, amit a helyi futás soha nem látna.
+- **Negyedéves ügynök-sweep** (`.claude/workflows/site-sweep.js`) — arra, amit teszt elvileg nem tud: külső listázások elcsúszása a valóságtól, jogszabályváltozás, fordításízű magyar szöveg. Öt független szemüveg, és minden találat elé odaáll egy szkeptikus, akinek a dolga megcáfolni. Nem hetente: lemérve, három külső értékelő tíz valós mellett hat téves állítást tett, és mindet le kellett mérni. **Minden megerősített találatból teszt lesz** valamelyik fenti rétegben — különben a sweep örökké ugyanazt hozná vissza.
 - **Pre-commit kapu** — a commit leáll, ha titok kerülne a kódba vagy bukna az audit. Hamis API-kulccsal tesztelve: blokkolt.
 - **`CLAUDE.md`** — a projekt szabályfájlja: architektúra-döntések és kemény szabályok, hogy minden jövőbeli változtatás örökölje őket.
 
 **Biztonsági alapállás:** az oldal *tervezetten statikus* — nincs adatbázis, nincs felhasználói fiók, nincs titok a kódban, nulla npm függőség. Ez eleve kizárja a dinamikus alkalmazások támadási felületének nagy részét.
+
+---
+
+## 9b. Architektúra-egyszerűsítés (2026-08-30)
+
+Kiderült, hogy **ugyanazt a fordítást két mechanizmus végezte**: a generátor build-időben előállította az `/en/` oldalt, a `setLang()` pedig futásidőben, a böngészőben újra lefordította ugyanazt. Két gépezet, két hibakészlet — és a hét kétnyelvű hibából mind a futásidejűből jött.
+
+A magyar oldal nyelvváltó gombja **sima link lett** `/en/`-re, ahogy az angol oldalon már eddig is az volt visszafelé. Amit ez törölt:
+
+- `setLang()` és a teljes futásidejű fordítási ág
+- a szűrt renderelési réteg, ami *kizárólag* ezt az ágat szolgálta ki — és amiről kiderült, hogy közben minden oldalbetöltéskor szöveggé alakította az adatvédelmi link és az impresszum e-mail linkjeit
+- a `data-hu` árnyékattribútumok és a `localStorage` — mindkettő teljesen kikerült
+
+`script.js`: **200 sor → 117 sor.** A `data-en` attribútumok maradtak, de tisztán build-idejű bemenetként.
+
+**Két következmény, ami számít.** Az oldal mostantól **semmit nem tárol a látogató böngészőjében** — se sütit, se helyi tárolót —, tehát a tájékoztatónak már nem kell azzal érvelnie, hogy a nyelvválasztás „feltétlenül szükséges" az ePrivacy 5. cikk (3) szerint; egyszerűen nincs mit indokolni. És angol tartalom többé nem jelenhet meg a magyar URL-en, tehát a canonical és a hreflang azt írja le, amit a látogató lát.
+
+A `CLAUDE.md` 2. szabálya ennek megfelelően szigorodott: **`innerHTML` értékadás egyáltalán nincs**, és az audit bukik, ha valaki visszaírja. Ez erősebb garancia a szűrésnél, mert nincs mit szűrni.
+
+**`MISTAKES.md`** — hibanapló, ami azt rögzíti, ami *némán* romlott el vagy *másodszor* fordult elő: mi történt, mi a gyökérok, mi akadályozza meg a megismétlődést. Ha ugyanaz a minta többször előjön, egysoros szabállyá desztilláljuk a `CLAUDE.md`-be — a napló őrzi meg, *miért* született a szabály, hogy később ne írja felül valaki, aki már elfelejtette.
 
 ---
 
@@ -176,18 +203,28 @@ A kézi átvizsgálás után az egész **beépült a folyamatba**, hogy ne kellj
 - ✅ Valódi konverziós pontok: Wolt-rendelés, rendezvény-űrlap, kattintható telefon, térkép, élő nyitvatartás-jelzés
 - ✅ SEO-kész: strukturált adat, közösségi előnézet, sitemap, Search Console
 - ✅ Automatikus élesítés: egy `git push` — és pár perc múlva élesben
-- ✅ Szűrt renderelés, pre-commit kapu, 55 automatizált ellenőrzés CI-ben
-- ✅ Saját fontok (GDPR), szigorított CSP, kézzel karbantartott vélemény-blokk
+- ✅ Két tesztréteg: 59 szöveges és 45 böngészős ellenőrzés, plusz pre-commit kapu
+- ✅ Saját fontok (GDPR), szigorított CSP, értékelés link nélkül átmásolt vélemény-szöveg nélkül
+- ✅ Nulla süti, nulla helyi tároló, nincs süti-banner — mert nincs mit engedélyezni
 
-**Számokban:** 40+ commit · 1 300+ sor saját kód (HTML/CSS/JS) · 48 étlap-bélyegkép · 2 nyelv · 55 automatizált ellenőrzés · 0 függőség.
+**Számokban:** 50+ commit · ~1 300 sor saját kód (HTML/CSS/JS) · 48 étlap-bélyegkép · 2 nyelv · 59 + 45 automatizált ellenőrzés · 0 függőség a kiszállított oldalon · 717 KB a teljes oldal képsúlya.
 
 ---
 
-## 11. Következő lehetséges lépések
+## 11. Nyitott tételek — mind a repón kívül
 
-- **Galéria** a teraszos és enteriőr fotókból
-- **Csípősség-skála és diétás jelölések** az étlapon (🌶️ szintek, vegetáriánus / vegán / gluténmentes)
-- **Foodora / további rendelési felületek** kiemelése, ha van
+A weboldal munkája le van zárva. Ami hátra van, az mind külső, és mind az üzemeltető feladata:
+
+1. **E-mail-hitelesítés** *(a legfontosabb, mert láthatatlanul kerül pénzbe)*. A levelezés a Google Workspace-en van, de az SPF a régi szolgáltatót engedélyezi (`include:_spf.m1.websupport.sk`), nincs DKIM és nincs DMARC. Amikor az étterem **válaszol** egy ajánlatkérésre, a levél hitelesítetlenül megy ki, és spambe kerülhet — egy elveszett árajánlatról sosem derül ki, hogy elveszett.
+   - SPF: `v=spf1 a mx include:_spf.google.com include:_spf.m1.websupport.sk ~all`
+   - DMARC (új TXT `_dmarc` néven): `v=DMARC1; p=none; rua=mailto:flexnfresh2023@gmail.com`
+   - DKIM: `admin.google.com` → Apps → Google Workspace → Gmail → Authenticate email
+2. **A Foodora-listázás törlése.** Nincs szerződés, tehát nincs partnerportál sem — ez ügyfélszolgálati/jogi megkeresés. Az oldal él, `CLOSED` státusszal és a 2026 februári költözés előtti címmel.
+3. **A Google cégprofil leválasztása a szomszédos szállodáról** (a cím szerkesztésénél a „Located in" mező), és friss fotók feltöltése — utcakép a Hősök terével, enteriőr, tálalt ételek, a Thai SELECT tanúsítvány. Turistaforgalmú helyen ez a legnagyobb ingyenes nyereség.
+
+**Későbbre, ha van rá igény:** csípősség-skála és diétás jelölések az étlapon; galéria a teraszos és enteriőr fotókból.
+
+**Amit *ne* csináljunk:** Foodora-listázás visszaállítása (nincs szerződés, és a Wolt a működő csatorna); vélemény-szöveg bármilyen formában az oldalra (l. `CLAUDE.md` 7. pont); Places API-alapú vélemény-automatizmus újraépítése.
 
 ---
 

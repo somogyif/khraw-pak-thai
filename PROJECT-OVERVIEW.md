@@ -133,8 +133,8 @@ A modern restaurant website that does its job:
 - ✅ Real conversion paths: ordering, events form, tappable phone, map, live open status
 - ✅ SEO-ready: structured data, social previews, sitemap, Search Console
 - ✅ Continuous deployment — every change goes live with one `git push`
-- ✅ Sanitised rendering layer — the language switch never injects raw HTML
-- ✅ 55 automated checks in CI on every push, plus a pre-commit gate
+- ✅ No runtime templating at all — both pages are generated, nothing assigns innerHTML
+- ✅ 59 checks reading the source and 45 checks driving a real browser, on every push
 - ✅ Self-hosted fonts (GDPR), tightened CSP, rating-only review block (no quoted text)
 
 From a placeholder-titled builder page to a genuine, conversion-focused restaurant site — grounded in the restaurant's real menu, real reviews, real photos, and a real brand story.
@@ -148,12 +148,25 @@ ship fast and then collapse in production:
 
 - **Static by design.** No database, no accounts, no payments, no secrets in the
   codebase, zero npm dependencies. Most of the attack surface simply does not exist.
-- **Sanitised rendering.** The bilingual switch parses content inside an inert
-  `<template>` and filters it against tag and attribute allowlists — verified end to
-  end with an XSS fixture, from the data source through to the rendered page.
-- **Automated verification.** 55 checks (structure, images, SEO, structured data,
-  form integrity, repo-wide secret scan, and a regression guard on the sanitiser) run
-  in CI on every push, with a weekly smoke test against the live site.
+- **No runtime templating.** The Hungarian and English pages are two generated
+  documents and the language switch is a link between them, so nothing parses or
+  injects HTML in the browser at all. A sanitiser used to guard that path; it was
+  removed on 2026-08-30 along with the path itself, after it turned out to have been
+  silently converting the privacy-notice link into plain text on every page load.
+  The audit now fails on any `innerHTML` assignment — a stronger guarantee than
+  filtering, because there is nothing left to filter.
+- **Automated verification, in two layers.** 59 checks reading the files (structure, images, SEO,
+  structured data, form integrity, repo-wide secret scan) and 45 browser checks that
+  assert on the rendered DOM — document language, untranslated attributes, keyboard
+  reach, focus handling, zero cookies, horizontal overflow at three widths. Both run
+  in CI on every push; the browser pass also runs weekly against the live site, which
+  is what catches a bad deploy rather than bad code. The second layer exists because
+  seven bugs lived here for three weeks with correct HTML source — text checks cannot
+  see rendering bugs by construction.
+- **A quarterly agent sweep** (`.claude/workflows/site-sweep.js`) covers what no test
+  can encode: external listings drifting from reality, regulatory change, copy that
+  reads like a translation. Five lenses, each finding adversarially refuted before it
+  is reported, and every confirmed finding becomes a check in one of the layers above.
 - **A pre-commit gate** blocks any commit carrying a secret or failing the audit.
 - **A written rules file** (`CLAUDE.md`) records the architecture decisions so future
   changes inherit them instead of drifting.

@@ -88,12 +88,14 @@ Shipping something that works is not the same as shipping something you are allo
 
 ## Quality
 
-- **55 automated checks in CI** ([`tests/audit.py`](tests/audit.py)) — structure and broken anchors, every referenced image existing and carrying alt text, JSON-LD validity, phone-number consistency, form integrity (hidden field and honeypot), hreflang reciprocity, repo-wide secret scanning, and a regression guard on the sanitiser. Dependency-free, so CI needs no install step.
+- **Two test layers, both in CI.** [`tests/audit.py`](tests/audit.py) — **59 checks** reading the files as text: structure and broken anchors, every referenced image existing and carrying alt text, JSON-LD validity, phone-number consistency, form integrity, hreflang reciprocity, repo-wide secret scanning. Dependency-free, runs in a second, wired into the pre-commit hook.
+- **[`tests/render-check.py`](tests/render-check.py) — 45 checks in a real browser**, because the first layer cannot see rendering bugs by construction. Seven of them lived here for three weeks with correct HTML source: the English page relabelled itself Hungarian at runtime, 36 alt texts stayed Hungarian, a form field vanished from the generated page, the menu photos were unreachable by keyboard, and a sanitiser silently ate the privacy-notice link. This layer asserts on the rendered DOM — document language, leftover Hungarian in attributes, links that are actually links, keyboard reach and focus return, zero cookies, no horizontal overflow at 320/390/1280. It runs against the live site weekly, which is what catches a bad deploy rather than bad code.
 - **Pre-commit gate** ([`.githooks/pre-commit`](.githooks/pre-commit)) — blocks any commit carrying a secret or failing the audit. Verified against a planted fake API key.
 - **Weekly smoke test** ([`tests/live-check.sh`](tests/live-check.sh)) against the deployed site: status, redirects, security headers, sitemap, robots, favicon.
+- **Quarterly agent sweep** ([`.claude/workflows/site-sweep.js`](.claude/workflows/site-sweep.js)) for what tests cannot see by construction — external listings drifting from reality, a statute changing, copy that reads like a translation. Five independent lenses, and every finding is put in front of a skeptic instructed to refute it before it reaches anyone. Not weekly: measured across three external reviews, three models produced roughly ten real findings and six false ones, and each false one cost an afternoon. Every confirmed finding becomes a check in one of the two layers above.
 - **Self-hosted fonts** — 14 WOFF2 files served from our own domain. A 2022 Munich ruling (LG München I, 3 O 17493/20) held that passing a visitor's IP to Google via Google Fonts breaches the GDPR precisely because self-hosting is available. This is an EU business, so the CDN had to go. CSP tightened to `style-src 'self'; font-src 'self'` afterwards.
 - **Accessibility** — contrast measured across the whole palette (worst case 5.9:1 against a 4.5 requirement), visible `:focus-visible` rings for keyboard navigation, intrinsic `width`/`height` on every image to prevent layout shift.
-- **Security posture** — the site is static by design: no database, no accounts, no payments, no secrets in the codebase, zero npm dependencies. The bilingual renderer parses content inside an inert `<template>` and filters it against tag and attribute allowlists, verified end to end with an XSS fixture.
+- **Security posture** — the site is static by design: no database, no accounts, no payments, no secrets in the codebase, zero npm dependencies in what ships. There is no runtime templating at all: both pages are generated at build time, nothing assigns `innerHTML`, and the audit fails on any attempt to reintroduce it. The site stores nothing in a visitor's browser — no cookies, no local storage.
 - **Working rules** ([`CLAUDE.md`](CLAUDE.md)) — architecture decisions and hard constraints recorded so future changes inherit them instead of rediscovering them.
 
 ---
@@ -108,7 +110,8 @@ site/                  the deployed site (Netlify publish directory)
   assets/img/          14 photos + 48 menu thumbnails
   assets/fonts/        14 self-hosted WOFF2 files
 scripts/build-en.py    generates the English page from the Hungarian
-tests/audit.py         55 checks, no dependencies
+tests/audit.py         59 checks, no dependencies
+tests/render-check.py  45 checks in a real browser
 tests/live-check.sh    smoke test against production
 .githooks/pre-commit   secret scan + audit before every commit
 netlify.toml           headers, caching, publish directory
@@ -122,7 +125,8 @@ CASE-STUDY.md          the full story, written for a general audience
 git config core.hooksPath .githooks   # enable the pre-commit gate, once
 
 python3 -m http.server 8765 -d site   # serve
-python3 tests/audit.py                # run the 55 checks
+python3 tests/audit.py                # 55 text checks, no dependencies
+python3 tests/render-check.py         # 45 browser checks (needs playwright)
 python3 scripts/build-en.py           # regenerate the English page
 bash tests/live-check.sh              # smoke-test production
 ```

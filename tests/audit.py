@@ -276,19 +276,34 @@ docs_text = {d: open(os.path.join(ROOT, d), encoding="utf-8").read()
 
 # ne hivatkozzanak törölt dolgokra
 index_html = read("index.html")
+script_js = read("script.js")
 gone = {
     "update-reviews.py": not os.path.exists(os.path.join(ROOT, "scripts", "update-reviews.py")),
     "AggregateRating": "AggregateRating" not in index_html,
     "ReserveAction": "ReserveAction" not in index_html,
+    # A szűrő és a futásidejű nyelvváltó 2026-08-30-án megszűnt. Három dokumentum
+    # még napokig úgy írta le a projektet, mintha meglennének.
+    "sanitiz": "sanitize" not in script_js,
+    "sanitis": "sanitize" not in script_js,
+    "localStorage": "localStorage" not in script_js,
 }
 for name, removed_from_code in gone.items():
     if not removed_from_code:
         continue
     mentions = [d for d, t in docs_text.items()
-                if name in t and "eltávolít" not in t[max(0, t.find(name) - 200):t.find(name) + 200]
-                and "removed" not in t[max(0, t.find(name) - 200):t.find(name) + 200]
-                and "kikerült" not in t[max(0, t.find(name) - 200):t.find(name) + 200]]
+                if name in t and not any(
+                    w in t[max(0, t.find(name) - 260):t.find(name) + 260].lower()
+                    # a mondat mondja meg, hogy már nincs — magyarul vagy angolul
+                    for w in ("eltávolít", "kikerült", "megszűnt", "törölt", "removed",
+                              "used to", "no longer", "silently ate", "was built and"))]
     check(f"nincs elavult hivatkozás erre: {name}", not mentions, ", ".join(mentions))
+
+# Egy tesztfájl, amit egyetlen dokumentum sem említ, olyan teszt, amit senki nem futtat.
+# A render-check.py három dokumentumból hiányzott, miközben ő fogja a legtöbb hibát.
+readme = docs_text.get("README.md", "")
+undocumented = [f for f in sorted(os.listdir(os.path.join(ROOT, "tests")))
+                if f.endswith((".py", ".sh")) and f not in readme]
+check("a README minden tesztfájlt említ", not undocumented, ", ".join(undocumented))
 
 print("\nKód")
 
