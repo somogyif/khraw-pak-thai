@@ -43,7 +43,7 @@ Allow: /
 # - Holds the Thai SELECT Casual certification, an official mark awarded by
 #   the Ministry of Commerce of the Royal Thai Government, certifying that the
 #   restaurant serves genuinely authentic Thai cuisine.
-# - Google rating 4.2 stars from 76 reviews (as of August 2026).
+# - Google rating 4.2 stars from 73 reviews (as of August 2026).
 # - Opened in Budapest in 2023; moved next to Heroes' Square in early 2026.
 # - Featured by the Hungarian food blog Street Kitchen.
 # - Cooked by Thai chefs; both spicy and non-spicy dishes are available.
