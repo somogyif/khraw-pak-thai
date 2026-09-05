@@ -43,9 +43,9 @@ no database and no payments. Keep it that way unless there is a clear reason not
 5. **Hungarian copy must read as native Hungarian**, not as a translation of the
    English. No truncated fragments as headings, no clumsy word repetition.
 6. **Two test layers, and both must pass.**
-   - `python3 tests/audit.py` — 55 checks, no dependencies, runs in a second,
+   - `python3 tests/audit.py` — 74 checks, no dependencies, runs in a second,
      wired into the pre-commit hook. Reads the files as text.
-   - `tests/render-check.py` — 45 checks in a real browser, in CI on every push.
+   - `tests/render-check.py` — 58 checks in a real browser, in CI on every push.
      Reads what the browser actually *produces*.
 
    The live site gets the same browser pass weekly in CI

@@ -93,6 +93,18 @@ def check_page(page, base, path, lang, privacy_href):
     section(f"{path}  — renderelt állapot")
 
     check("nincs konzolhiba", not errors, "; ".join(errors[:2]))
+
+    # Ugrólink: a fejléc mögé eddig csak végigtabolással lehetett eljutni.
+    # A legelső Tabbal kell mérni, még mielőtt bármi máshoz hozzányúlnánk.
+    page.keyboard.press("Tab")
+    skip = page.evaluate("""(()=>{const a=document.activeElement;
+        return a && a.classList.contains('skip-link')
+          ? {href:a.getAttribute('href'), onscreen:a.getBoundingClientRect().left >= 0} : null;})()""")
+    check("az oldal első Tabja az ugrólinkra visz, és az láthatóvá válik",
+          bool(skip and skip["onscreen"]), str(skip))
+    check("az ugrólink létező <main> elemre mutat",
+          bool(skip) and page.evaluate(
+              "!!document.querySelector('main' + %r)" % skip["href"]))
     check(f'a dokumentum nyelve lang="{lang}"',
           page.evaluate("document.documentElement.lang") == lang,
           f'kapott: {page.evaluate("document.documentElement.lang")}')
@@ -161,6 +173,34 @@ def check_page(page, base, path, lang, privacy_href):
           page.evaluate("""!document.getElementById('lightbox').classList.contains('open')
                            && document.activeElement.classList.contains('mi-thumb')"""))
 
+    # ── akadálymentesség (a 2026-09-05-i sweep megerősített találatai) ──
+    check("pontosan egy <main> tereptárgy van",
+          page.evaluate("document.querySelectorAll('main').length") == 1)
+
+    # A címsorszint a renderelt DOM-ban sem ugorhat (h1 után négy h3 állt).
+    jump = page.evaluate("""(()=>{const l=[...document.querySelectorAll('h1,h2,h3,h4,h5,h6')]
+        .map(h=>+h.tagName[1]); const bad=[];
+        for(let i=1;i<l.length;i++) if(l[i]>l[i-1]+1) bad.push('h'+l[i-1]+'→h'+l[i]);
+        return bad;})()""")
+    check("a renderelt címsorszintek nem ugranak", not jump, "; ".join(jump[:3]))
+
+    # A fülsor tab szerepet hirdet — a billentyűzetnek is így kell viselkednie.
+    stops = page.evaluate("[...document.querySelectorAll('.menu-tab')].filter(t=>t.tabIndex===0).length")
+    check("a fülsorban egyetlen tabstop van", stops == 1, f"{stops} db")
+    page.focus(".menu-tab[aria-selected='true']")
+    page.keyboard.press("ArrowRight")
+    page.wait_for_timeout(150)
+    arrow = page.evaluate("""(()=>{const t=document.activeElement;
+        if(!t.classList.contains('menu-tab')) return null;
+        const p=document.getElementById(t.getAttribute('aria-controls'));
+        return {sel:t.getAttribute('aria-selected'), idx:[...document.querySelectorAll('.menu-tab')].indexOf(t),
+                panel:!!p, shown:p&&p.classList.contains('is-active'),
+                role:p&&p.getAttribute('role')};})()""")
+    check("a nyílbillentyű lépteti a füleket, és a panel követi",
+          arrow and arrow["idx"] == 1 and arrow["sel"] == "true"
+          and arrow["shown"] and arrow["role"] == "tabpanel", str(arrow))
+    page.keyboard.press("ArrowLeft")
+
     # Vízszintes túlcsordulás a három mérethatáron.
     for w, h in ((320, 720), (390, 844), (1280, 800)):
         page.set_viewport_size({"width": w, "height": h})
@@ -214,6 +254,24 @@ def check_map_on_request(page, base):
           str(frame))
 
 
+def check_reduced_motion(page, base):
+    """Akinek a rendszere kevesebb mozgást kér, annak nem mozgatunk semmit."""
+    page.emulate_media(reduced_motion="reduce")
+    page.goto(base + "/", wait_until="networkidle")
+    section("Mozgásérzékenység — prefers-reduced-motion")
+
+    worst = page.evaluate("""(()=>{let max=0;
+        document.querySelectorAll('a,button,img,summary,.dish-card,.mi-thumb').forEach(el=>{
+          const cs=getComputedStyle(el);
+          [cs.transitionDuration, cs.animationDuration].forEach(v=>{
+            (v||'').split(',').forEach(d=>{d=d.trim();
+              const n=d.endsWith('ms')?parseFloat(d):parseFloat(d)*1000;
+              if(!isNaN(n) && n>max) max=n;});});});
+        return max;})()""")
+    check("a mozgáscsökkentést kérőknek nincs futó átmenet", worst < 50, f"{worst} ms")
+    page.emulate_media(reduced_motion="no-preference")
+
+
 # ---------------------------------------------------------------- futtatás
 def main():
     try:
@@ -244,6 +302,7 @@ def main():
             check_page(page, base, "/en/", "en", "/en/privacy/")
             check_english_attributes(page, base)
             check_map_on_request(page, base)
+            check_reduced_motion(page, base)
             browser.close()
     finally:
         if httpd:

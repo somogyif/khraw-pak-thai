@@ -134,7 +134,7 @@ A modern restaurant website that does its job:
 - ✅ SEO-ready: structured data, social previews, sitemap, Search Console
 - ✅ Continuous deployment — every change goes live with one `git push`
 - ✅ No runtime templating at all — both pages are generated, nothing assigns innerHTML
-- ✅ 60 checks reading the source and 45 checks driving a real browser, on every push
+- ✅ 74 checks reading the source and 58 checks driving a real browser, on every push
 - ✅ Self-hosted fonts (GDPR), tightened CSP, rating-only review block (no quoted text)
 
 From a placeholder-titled builder page to a genuine, conversion-focused restaurant site — grounded in the restaurant's real menu, real reviews, real photos, and a real brand story.
@@ -155,8 +155,8 @@ ship fast and then collapse in production:
   silently converting the privacy-notice link into plain text on every page load.
   The audit now fails on any `innerHTML` assignment — a stronger guarantee than
   filtering, because there is nothing left to filter.
-- **Automated verification, in two layers.** 60 checks reading the files (structure, images, SEO,
-  structured data, form integrity, repo-wide secret scan) and 45 browser checks that
+- **Automated verification, in two layers.** 74 checks reading the files (structure, images, SEO,
+  structured data, form integrity, repo-wide secret scan) and 58 browser checks that
   assert on the rendered DOM — document language, untranslated attributes, keyboard
   reach, focus handling, zero cookies, horizontal overflow at three widths. Both run
   in CI on every push; the browser pass also runs weekly against the live site, which

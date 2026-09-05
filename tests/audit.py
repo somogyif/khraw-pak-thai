@@ -266,6 +266,101 @@ check("nincs innerHTML értékadás a script.js-ben",
       not re.search(r"\.innerHTML\s*=", js),
       ", ".join(re.findall(r"(\w+)\.innerHTML\s*=", js)))
 
+# ------------------------------------------------------- akadálymentesség
+# Mindegyik ellenőrzés egy-egy megerősített találat a 2026-09-05-i ügynök-sweepből.
+# Amit egy sweep egyszer megtalált, azt utána ingyen találja meg egy teszt.
+print("\nAkadálymentesség")
+
+_PAGES = {
+    "index.html": html,
+    "en/index.html": read("en/index.html"),
+    "adatvedelem/index.html": read("adatvedelem/index.html"),
+    "en/privacy/index.html": read("en/privacy/index.html"),
+    "404.html": read("404.html"),
+}
+
+# A két főoldalon nem volt <main> és nem volt ugrólink: aki billentyűzettel
+# érkezett, minden aloldalon végigtabolta a fejlécet, mielőtt a tartalomhoz ért.
+_no_main = [n for n, t in _PAGES.items() if len(re.findall(r"<main[\s>]", t)) != 1]
+check("mindegyik oldalon pontosan egy <main> van", not _no_main, ", ".join(_no_main))
+
+# Ugrólink ott kell, ahol a <main> előtt fejléc áll — a 404 oldalon nincs mit átugrani.
+_needs_skip = {n: t for n, t in _PAGES.items()
+               if re.search(r"<header[\s>].*?<main[\s>]", t, re.S)}
+_no_skip = [n for n, t in _needs_skip.items()
+            if not re.search(r'class="skip-link"[^>]*href="#([^"]+)"', t)
+            or re.search(r'class="skip-link"[^>]*href="#([^"]+)"', t).group(1)
+            not in re.findall(r'id="([^"]+)"', t)]
+check(f"a fejléces {len(_needs_skip)} oldalon van működő ugrólink", not _no_skip, ", ".join(_no_skip))
+
+# A címsorszint nem ugorhat: a h1 után négy h3 állt, h2 nélkül.
+_skips = []
+for _n, _t in _PAGES.items():
+    _lv = [int(m) for m in re.findall(r"<h([1-6])[\s>]", _t)]
+    for _a, _b in zip(_lv, _lv[1:]):
+        if _b > _a + 1:
+            _skips.append(f"{_n}: h{_a} → h{_b}")
+check("a címsorszintek nem ugranak át szintet", not _skips, "; ".join(_skips[:3]))
+
+# A fülsor tab szerepet hirdetett, de egyetlen ARIA-kötelezettséget sem
+# teljesített: nem volt aria-selected, nem volt tabpanel, nem volt aria-controls.
+for _n, _t in (("index.html", html), ("en/index.html", _PAGES["en/index.html"])):
+    _tabs = re.findall(r"<button[^>]*role=\"tab\"[^>]*>", _t)
+    _ids = set(re.findall(r'id="([^"]+)"', _t))
+    _bad = []
+    for _tag in _tabs:
+        if "aria-selected=" not in _tag:
+            _bad.append("nincs aria-selected")
+            continue
+        _c = re.search(r'aria-controls="([^"]+)"', _tag)
+        if not _c:
+            _bad.append("nincs aria-controls")
+        elif _c.group(1) not in _ids:
+            _bad.append(f"aria-controls={_c.group(1)} nem létezik")
+    _sel = [t for t in _tabs if 'aria-selected="true"' in t]
+    check(f"{_n}: mind az {len(_tabs)} fül teljes ARIA-t kapott", _tabs and not _bad,
+          "; ".join(_bad[:3]))
+    check(f"{_n}: pontosan egy fül van kiválasztva", len(_sel) == 1, f"{len(_sel)} db")
+    check(f"{_n}: minden fülhöz tartozik tabpanel",
+          len(re.findall(r'role="tabpanel"', _t)) == len(_tabs),
+          f"{len(re.findall(chr(114)+'ole=' + chr(34) + 'tabpanel' + chr(34), _t))} panel / {len(_tabs)} fül")
+
+# Tizenegy animált/áttűnő szabály futott azoknál is, akik kevesebb mozgást kérnek.
+_anim = len(re.findall(r"\b(?:animation|transition)\s*:", css))
+check(f"a {_anim} animált szabályhoz van prefers-reduced-motion kivétel",
+      "prefers-reduced-motion" in css)
+
+# ---------------------------------------------------------- magyar tipográfia
+print("\nMagyar szöveg")
+
+# A tér neve „Hősök tere”, tehát a ragos alak „Hősök terére” — a „Hősök térre”
+# két különböző szót kever. Három helyen állt így.
+_ragok = re.findall(r"Hősök tér(?:re|en|ről|hez|nél|ig)\b", html)
+check("a Hősök tere helyesen ragozódik", not _ragok, ", ".join(sorted(set(_ragok))))
+
+# A magyar gondolatjel a nagykötőjel (–). Négy mondatban hosszú kötőjel (—) állt,
+# egy mondaton belül a kettő keverve. Az árlistában a — „nincs ilyen méret”, az marad.
+_hu_text = re.sub(r'data-en(?:-[a-z-]+)?="[^"]*"', "", html)
+_hu_text = re.sub(r"<!--.*?-->", "", _hu_text, flags=re.S)
+_hu_text = re.sub(r'<span class="mi-price">.*?</span>', "", _hu_text, flags=re.S)
+check("a magyar szövegben egyféle gondolatjel van (–)", "—" not in _hu_text,
+      f"{_hu_text.count(chr(8212))} hosszú kötőjel")
+
+# ------------------------------------------------------------ tényegyezőség
+print("\nTények egyezősége")
+
+# Az oldalon 73, az llms.txt-ben 76 vélemény állt. Egy szám, három helyen.
+_counts = set()
+for _t in (html, _PAGES["en/index.html"], read("llms.txt")):
+    _counts |= {int(m) for m in re.findall(r"(\d+)\s*(?:Google-vélemény|Google reviews|reviews)", _t)}
+check("a vélemények száma mindenhol ugyanaz", len(_counts) <= 1,
+      ", ".join(map(str, sorted(_counts))))
+
+# Az impresszum a cégjegyzékszám mellett a bejegyző bíróságot is közli.
+check("az impresszumban ott a cégjegyzékbe bejegyző bíróság",
+      "Cégbírósága" in html and "Registry Court" in _PAGES["en/index.html"])
+
+
 # ---------------------------------------------------------------- kód
 print("\nDokumentáció")
 # Kétszer fordult elő, hogy a dokumentumok a kód mögött maradtak — ezért ellenőrzi a CI.
@@ -331,8 +426,12 @@ for name, src in (("index.html", html), ("script.js", js)):
 
 # a dokumentumokban leírt ellenőrzésszám csak a végén hasonlítható a valódihoz
 _total = passes + len(failures) + 1          # +1: ez az ellenőrzés maga
+# A CLAUDE.md hetekig „55 ellenőrzést” írt, miközben 60 futott — a szabályfájl
+# ugyanúgy elavulhat, mint a többi dokumentum, ezért ő is a kapun belülre kerül.
+_counted = dict(docs_text)
+_counted["CLAUDE.md"] = open(os.path.join(ROOT, "CLAUDE.md"), encoding="utf-8").read()
 _stale = []
-for _d, _t in docs_text.items():
+for _d, _t in _counted.items():
     _nums = [int(m.group(1)) for m in
              re.finditer(r"\b(\d+)\s+(?:automated checks|checks|automatizált ellenőrzés|ellenőrzés)", _t)]
     if _nums and _total not in _nums:
