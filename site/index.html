@@ -128,6 +128,8 @@
 </head>
 <body>
 
+<a class="skip-link" href="#main" data-en="Skip to content">Ugrás a tartalomra</a>
+
 <!-- ==================== FEJLÉC ==================== -->
 <header class="site-header" id="top">
   <div class="wrap header-inner">
@@ -159,6 +161,8 @@
   </nav>
 </header>
 
+<main id="main">
+
 <!-- ==================== HERO ==================== -->
 <section class="hero">
   <div class="wrap hero-inner">
@@ -189,7 +193,8 @@
 </section>
 
 <!-- ==================== USP ==================== -->
-<section class="usp">
+<section class="usp" aria-labelledby="usp-title">
+  <h2 class="sr-only" id="usp-title" data-en="Why Khraw Pak Thai">Miért a Khraw Pak Thai</h2>
   <div class="wrap usp-grid">
     <div class="usp-item"><span class="usp-ico">🌶️</span><h3 data-en="Authentic Thai">Autentikus thai</h3><p data-en="Real Thai recipes with lemongrass, galangal and kaffir lime — cooked by Thai chefs.">Eredeti thai receptek citromfűvel, galangával és kaffir citromlevéllel, thai szakácsok kezéből.</p></div>
     <div class="usp-item"><span class="usp-ico">🥘</span><h3 data-en="Hungarian classics">Magyar klasszikusok</h3><p data-en="Goulash, stew, breaded cutlet and Angus burgers — the comfort food everyone knows and loves.">Pörkölt, gulyás, rántott hús és Angus burgerek – a jól ismert, szeretett ízek.</p></div>
@@ -353,15 +358,15 @@
     </div>
 
     <div class="menu-tabs" role="tablist">
-      <button class="menu-tab is-active" data-cat="thai" role="tab" data-en="Thai dishes">Thai fogások</button>
-      <button class="menu-tab" data-cat="hun" role="tab" data-en="Hungarian dishes">Magyar fogások</button>
-      <button class="menu-tab" data-cat="sides" role="tab" data-en="Sides">Köretek</button>
-      <button class="menu-tab" data-cat="dessert" role="tab" data-en="Desserts">Desszertek</button>
-      <button class="menu-tab" data-cat="drinks" role="tab" data-en="Drinks">Italok</button>
+      <button class="menu-tab is-active" data-cat="thai" role="tab" id="tab-thai" aria-controls="panel-thai" aria-selected="true" tabindex="0" data-en="Thai dishes">Thai fogások</button>
+      <button class="menu-tab" data-cat="hun" role="tab" id="tab-hun" aria-controls="panel-hun" aria-selected="false" tabindex="-1" data-en="Hungarian dishes">Magyar fogások</button>
+      <button class="menu-tab" data-cat="sides" role="tab" id="tab-sides" aria-controls="panel-sides" aria-selected="false" tabindex="-1" data-en="Sides">Köretek</button>
+      <button class="menu-tab" data-cat="dessert" role="tab" id="tab-dessert" aria-controls="panel-dessert" aria-selected="false" tabindex="-1" data-en="Desserts">Desszertek</button>
+      <button class="menu-tab" data-cat="drinks" role="tab" id="tab-drinks" aria-controls="panel-drinks" aria-selected="false" tabindex="-1" data-en="Drinks">Italok</button>
     </div>
 
     <!-- THAI -->
-    <div class="menu-panel is-active" data-cat="thai">
+    <div class="menu-panel is-active" data-cat="thai" id="panel-thai" role="tabpanel" aria-labelledby="tab-thai" tabindex="0">
       <div class="menu-cols">
         <div class="menu-group">
           <h3 data-en="Appetizers">Előételek</h3>
@@ -428,7 +433,7 @@
     </div>
 
     <!-- MAGYAR -->
-    <div class="menu-panel" data-cat="hun">
+    <div class="menu-panel" data-cat="hun" id="panel-hun" role="tabpanel" aria-labelledby="tab-hun" tabindex="0">
       <div class="menu-cols">
         <div class="menu-group">
           <h3 data-en="Burgers">Burgerek</h3>
@@ -487,7 +492,7 @@
     </div>
 
     <!-- KÖRETEK -->
-    <div class="menu-panel" data-cat="sides">
+    <div class="menu-panel" data-cat="sides" id="panel-sides" role="tabpanel" aria-labelledby="tab-sides" tabindex="0">
       <div class="menu-cols">
         <div class="menu-group">
           <h3 data-en="Sides">Köretek</h3>
@@ -507,7 +512,7 @@
     </div>
 
     <!-- DESSZERTEK -->
-    <div class="menu-panel" data-cat="dessert">
+    <div class="menu-panel" data-cat="dessert" id="panel-dessert" role="tabpanel" aria-labelledby="tab-dessert" tabindex="0">
       <div class="menu-cols">
         <div class="menu-group">
           <h3 data-en="Desserts">Desszertek</h3>
@@ -522,7 +527,7 @@
     </div>
 
     <!-- ITALOK -->
-    <div class="menu-panel" data-cat="drinks">
+    <div class="menu-panel" data-cat="drinks" id="panel-drinks" role="tabpanel" aria-labelledby="tab-drinks" tabindex="0">
       <div class="menu-cols">
         <div class="menu-group">
           <h3 data-en="Coffee &amp; tea">Kávé &amp; tea</h3>
@@ -724,6 +729,8 @@
     </div>
   </div>
 </section>
+
+</main>
 
 <!-- ==================== LÁBLÉC ==================== -->
 <footer class="site-footer">

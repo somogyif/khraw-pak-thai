@@ -17,14 +17,30 @@
     });
   }
 
-  // Étlap fülek
-  var tabs = document.querySelectorAll('.menu-tab');
+  // Étlap fülek — a markup tab szerepet hirdet, tehát teljesíteni is kell:
+  // aria-selected, egyetlen tabstop, és nyílbillentyűs léptetés (WAI-ARIA tabs).
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.menu-tab'));
   var panels = document.querySelectorAll('.menu-panel');
-  tabs.forEach(function(tab){
-    tab.addEventListener('click', function(){
-      var cat = tab.getAttribute('data-cat');
-      tabs.forEach(function(t){ t.classList.toggle('is-active', t === tab); });
-      panels.forEach(function(p){ p.classList.toggle('is-active', p.getAttribute('data-cat') === cat); });
+  function selectTab(tab, moveFocus){
+    var cat = tab.getAttribute('data-cat');
+    tabs.forEach(function(t){
+      var on = t === tab;
+      t.classList.toggle('is-active', on);
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      t.setAttribute('tabindex', on ? '0' : '-1');   // egy fül, egy tabstop
+    });
+    panels.forEach(function(p){ p.classList.toggle('is-active', p.getAttribute('data-cat') === cat); });
+    if(moveFocus) tab.focus();
+  }
+  tabs.forEach(function(tab, i){
+    tab.addEventListener('click', function(){ selectTab(tab, false); });
+    tab.addEventListener('keydown', function(e){
+      var to = null;
+      if(e.key === 'ArrowRight' || e.key === 'ArrowDown') to = tabs[(i + 1) % tabs.length];
+      else if(e.key === 'ArrowLeft' || e.key === 'ArrowUp') to = tabs[(i - 1 + tabs.length) % tabs.length];
+      else if(e.key === 'Home') to = tabs[0];
+      else if(e.key === 'End') to = tabs[tabs.length - 1];
+      if(to){ e.preventDefault(); selectTab(to, true); }
     });
   });
 
