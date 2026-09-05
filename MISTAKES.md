@@ -9,6 +9,38 @@ ami **másodszor** fordult elő.
 
 ---
 
+## 2026-09-05 — A fülsor ARIA-szerepet hirdetett, amit egyikünk sem teljesített
+
+**Mi történt.** Az étlap öt füle `role="tab"` attribútummal, a sor
+`role="tablist"`-tel volt megjelölve. Ebből semmi nem valósult meg: nem volt
+`aria-selected`, nem volt `aria-controls`, a panelekből hiányzott a
+`role="tabpanel"`, és a nyílbillentyűk nem csináltak semmit. Egérrel tökéletesen
+működött, ezért hónapokig nem tűnt fel.
+
+**Gyökérok.** Az ARIA-szerep **ígéret**, nem díszítés. Aki `role="tab"`-ot ír,
+azt vállalja, hogy a fül a WAI-ARIA tabs mintát követi. A képernyőolvasó ezt
+felmondja a látogatónak („fül, 1 az 5-ből"), a látogató pedig a nyílbillentyűhöz
+nyúl — és nem történik semmi. **Rosszabb, mint ha ott sem lenne a szerep**: egy
+sima gombsor legalább azt mondja, amit tud.
+
+Ugyanez a minta, mint a némán elnyelt adatvédelmi link: a forrás helyesnek
+látszott, csak épp nem azt csinálta, amit állított magáról.
+
+**Megelőzés.** Az `audit.py` mostantól minden `role="tab"`-nál megköveteli az
+`aria-selected`-et és egy létező elemre mutató `aria-controls`-t, ellenőrzi, hogy
+pontosan egy fül van kiválasztva, és hogy annyi `tabpanel` van, ahány fül. A
+`render-check.py` a böngészőben megnyomja a nyílbillentyűt, és megnézi, hogy a
+kijelölés meg a panel tényleg követi-e. Mind a négy ellenőrzés szándékos
+regresszióval tesztelve.
+
+**Ugyanebben a körben, ugyanezzel a tanulsággal.** A `CLAUDE.md` hetekig
+„55 ellenőrzést" írt, miközben 60 futott — pedig a dokumentum-elcsúszást már
+őrizte egy audit-ellenőrzés. Csak épp a **szabályfájlra nem terjedt ki**. A
+kapun kívül hagyott dokumentum ugyanúgy elavul, mint a többi; most már ő is
+belül van.
+
+---
+
 ## 2026-08-31 — „Hand-coded" — másodszor csúszott vissza egy valótlan állítás
 
 **Mi történt.** A showcase-dokumentumok hét helyen állították, hogy az oldal

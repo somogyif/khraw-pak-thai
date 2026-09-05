@@ -164,7 +164,7 @@ Mindhárom javítás élesítve és élőben visszaellenőrizve.
 A kézi átvizsgálás után az egész **beépült a folyamatba**, hogy ne kelljen újra kézzel csinálni:
 
 - **`tests/audit.py` — 74 ellenőrzés** külső függőség nélkül, másodperc alatt lefut, a pre-commit kapuban is: szerkezet, képek és alt-szövegek, SEO és meta, strukturált adatok érvényessége, űrlap (honeypot, rejtett mező), titok-szivárgás a teljes repóban, és a kétnyelvűség szerkezeti őrei.
-- **`tests/render-check.py` — 58 ellenőrzés igazi böngészőben**, CI-ban minden push-ra. Ez azt nézi, amit a böngésző *előállít*, nem amit a fájl tartalmaz: a dokumentum nyelvét, a maradék magyar `alt`-okat az angol oldalon, az űrlap épségét, a billentyűzetes elérést, a fókuszkezelést, a nulla sütit és a vízszintes túlcsordulást 320/390/1280 px-en. 2026-08-29-én hét olyan hiba került elő, amit szöveges ellenőrzés elvileg nem láthat — ez a réteg mind a hetet elkapta volna.
+- **`tests/render-check.py` — 62 ellenőrzés igazi böngészőben**, CI-ban minden push-ra. Ez azt nézi, amit a böngésző *előállít*, nem amit a fájl tartalmaz: a dokumentum nyelvét, a maradék magyar `alt`-okat az angol oldalon, az űrlap épségét, a billentyűzetes elérést, a fókuszkezelést, a nulla sütit és a vízszintes túlcsordulást 320/390/1280 px-en. 2026-08-29-én hét olyan hiba került elő, amit szöveges ellenőrzés elvileg nem láthat — ez a réteg mind a hetet elkapta volna.
 - **`tests/live-check.sh`** — az élesített oldal füstpróbája: HTTP/HTTPS, biztonsági fejlécek, sitemap, robots, favicon, átirányítás.
 - **CI** — minden pusholásnál lefut mindkét tesztréteg. Hetente egyszer ugyanaz a böngészős kör **az élesített oldalon** is végigmegy (`tests/render-check.py https://khrawpakthai.com`) — ez fogja meg az elrontott deployt vagy az elmozdult Netlify-beállítást, amit a helyi futás soha nem látna.
 - **Negyedéves ügynök-sweep** (`.claude/workflows/site-sweep.js`) — arra, amit teszt elvileg nem tud: külső listázások elcsúszása a valóságtól, jogszabályváltozás, fordításízű magyar szöveg. Öt független szemüveg, és minden találat elé odaáll egy szkeptikus, akinek a dolga megcáfolni. Nem hetente: lemérve, három külső értékelő tíz valós mellett hat téves állítást tett, és mindet le kellett mérni. **Minden megerősített találatból teszt lesz** valamelyik fenti rétegben — különben a sweep örökké ugyanazt hozná vissza.
@@ -203,11 +203,11 @@ A `CLAUDE.md` 2. szabálya ennek megfelelően szigorodott: **`innerHTML` érték
 - ✅ Valódi konverziós pontok: Wolt-rendelés, rendezvény-űrlap, kattintható telefon, térkép, élő nyitvatartás-jelzés
 - ✅ SEO-kész: strukturált adat, közösségi előnézet, sitemap, Search Console
 - ✅ Automatikus élesítés: egy `git push` — és pár perc múlva élesben
-- ✅ Két tesztréteg: 74 szöveges és 58 böngészős ellenőrzés, plusz pre-commit kapu
+- ✅ Két tesztréteg: 74 szöveges és 62 böngészős ellenőrzés, plusz pre-commit kapu
 - ✅ Saját fontok (GDPR), szigorított CSP, értékelés link nélkül átmásolt vélemény-szöveg nélkül
 - ✅ Nulla süti, nulla helyi tároló, nincs süti-banner — mert nincs mit engedélyezni
 
-**Számokban:** 50+ commit · ~1 300 sor saját kód (HTML/CSS/JS) · 48 étlap-bélyegkép · 2 nyelv · 74 + 58 automatizált ellenőrzés · 0 függőség a kiszállított oldalon · 717 KB a teljes oldal képsúlya.
+**Számokban:** 50+ commit · ~1 300 sor saját kód (HTML/CSS/JS) · 48 étlap-bélyegkép · 2 nyelv · 74 + 62 automatizált ellenőrzés · 0 függőség a kiszállított oldalon · 717 KB a teljes oldal képsúlya.
 
 ---
 

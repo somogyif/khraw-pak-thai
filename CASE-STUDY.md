@@ -64,7 +64,7 @@ A modern restaurant website that actually does its job:
 - ✅ **SEO-ready**: structured data, social previews, semantic markup, sitemap
 - ✅ **Fast & fully responsive** — no framework, image-optimised, mobile-first
 - ✅ **One-drag deploy** (Netlify-ready static build)
-- ✅ **Audited, not just shipped** — two test layers: 74 checks reading the source, and 58 checks driving a real browser. The second layer exists because seven bugs survived three weeks and three external reviews with perfectly correct HTML
+- ✅ **Audited, not just shipped** — two test layers: 74 checks reading the source, and 62 checks driving a real browser. The second layer exists because seven bugs survived three weeks and three external reviews with perfectly correct HTML
 - ✅ **Compliance-checked** — bilingual privacy notice, full imprint, fonts self-hosted for GDPR, and a map that loads only when asked, so no cookie banner is needed
 - ✅ **Externally reviewed** — three independent AI models were asked to attack the work across three rounds. Roughly ten real findings were acted on, and six false ones were measured and rejected — including a claim that the menu was images-only when it is text, and that images lacked dimensions when every one has them
 

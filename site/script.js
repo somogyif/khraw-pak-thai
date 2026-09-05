@@ -89,9 +89,14 @@
     // A bélyegkép <img>, tehát alapból nem fókuszálható: gombbá tesszük, hogy
     // billentyűzettel is meg lehessen nyitni. Csak itt, JS-ből — JS nélkül
     // nincs nagyító, és akkor ne is látsszon gombnak.
+    var openLabel = document.documentElement.lang === 'en'
+      ? 'Open photo: ' : 'Fénykép megnyitása: ';
     document.querySelectorAll('.mi-thumb').forEach(function(t){
       t.setAttribute('role', 'button');
       t.setAttribute('tabindex', '0');
+      // A gomb neve mondja meg, mit csinál — az alt egyedül csak a szomszédos
+      // sort ismételné meg a képernyőolvasónak.
+      t.setAttribute('aria-label', openLabel + (t.alt || ''));
       function open(){ openLb(t.getAttribute('data-full') || t.src, t.alt); }
       t.addEventListener('click', open);
       t.addEventListener('keydown', function(e){

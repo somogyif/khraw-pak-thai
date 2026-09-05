@@ -154,6 +154,14 @@ def check_page(page, base, path, lang, privacy_href):
           kb and kb["role"] == "button" and kb["tab"] == "0", str(kb))
     check("a bélyegkép a teljes méretű képre mutat (data-full)", kb and kb["full"])
 
+    # A gomb neve mondja meg, mit csinál. Eddig csak a szomszédos sort ismételte.
+    named = page.evaluate("""(()=>{const t=[...document.querySelectorAll('.mi-thumb')];
+        const bad=t.filter(e=>{const l=e.getAttribute('aria-label')||'';
+          return !l || l === (e.getAttribute('alt')||'');});
+        return {n:t.length, bad:bad.length, sample:t[0]&&t[0].getAttribute('aria-label')};})()""")
+    check(f"mind a {named['n']} fotógomb neve elmondja, mit csinál",
+          named["n"] > 0 and named["bad"] == 0, str(named))
+
     # Enter megnyitja, Escape bezárja, és a fókusz visszatér.
     page.focus(".mi-thumb")
     page.keyboard.press("Enter")
@@ -161,10 +169,13 @@ def check_page(page, base, path, lang, privacy_href):
     opened = page.evaluate("""(()=>{const lb=document.getElementById('lightbox');
         return {open:lb.classList.contains('open'), role:lb.getAttribute('role'),
                 modal:lb.getAttribute('aria-modal'), inside:lb.contains(document.activeElement),
+                name:lb.getAttribute('aria-label'),
                 src:lb.querySelector('img').getAttribute('src')};})()""")
     check("Enterre megnyílik a nagyító, párbeszédpanelként",
           opened["open"] and opened["role"] == "dialog" and opened["modal"] == "true" and opened["inside"],
           str({k: v for k, v in opened.items() if k != "src"}))
+    # Névtelen párbeszédpanelt a képernyőolvasó csak „párbeszédpanel”-nek mond.
+    check("a nagyítónak van neve", bool((opened.get("name") or "").strip()), repr(opened.get("name")))
     check("a nagyító a teljes méretű képet tölti",
           "/thumb/" not in (opened["src"] or ""), opened["src"])
     page.keyboard.press("Escape")

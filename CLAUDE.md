@@ -45,7 +45,7 @@ no database and no payments. Keep it that way unless there is a clear reason not
 6. **Two test layers, and both must pass.**
    - `python3 tests/audit.py` — 74 checks, no dependencies, runs in a second,
      wired into the pre-commit hook. Reads the files as text.
-   - `tests/render-check.py` — 58 checks in a real browser, in CI on every push.
+   - `tests/render-check.py` — 62 checks in a real browser, in CI on every push.
      Reads what the browser actually *produces*.
 
    The live site gets the same browser pass weekly in CI
