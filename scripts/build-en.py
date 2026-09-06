@@ -159,6 +159,11 @@ def generate():
         page, count=1, flags=re.S,
     )
 
+    # 3b) a magyar jogi oldalra mutató hivatkozások az angol párjukra
+    #     Enélkül az angol lábléc "Privacy notice" linkje a MAGYAR tájékoztatóra vitt —
+    #     a data-en csak a szöveget cseréli, a href-et nem.
+    page = page.replace('href="/adatvedelem/', 'href="/en/privacy/')
+
     # 4) relatív hivatkozások gyökérrelatívvá (az /en/ alkönyvtár miatt)
     page = re.sub(r'(\s(?:src|href))="(assets/|favicon\.ico|styles\.css|script\.js)',
                   r'\1="/\2', page)

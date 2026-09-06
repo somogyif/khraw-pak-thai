@@ -179,6 +179,45 @@ check("a pre-commit ellenőrzés verziókövetett",
 check("van projektszintű szabályfájl (CLAUDE.md)",
       os.path.exists(os.path.join(ROOT, "CLAUDE.md")))
 
+# ── fogyasztóvédelmi tájékoztatás ────────────────────────────────────────
+print("\nFogyasztóvédelem")
+
+# Az Fgytv. 17/A. § (1a) szerint a békéltető testület székhelyét, telefonos és
+# internetes elérhetőségét ÉS levelezési címét a honlapon kell közölni. Mind a
+# négy elemnek meg kell lennie, különben a tájékoztatás hiányos.
+for _name, _path in (("magyar", os.path.join(SITE, "adatvedelem", "index.html")),
+                     ("angol", os.path.join(SITE, "en", "privacy", "index.html"))):
+    _t = open(_path, encoding="utf-8").read() if os.path.exists(_path) else ""
+    _need = {
+        "testület neve": "Budapesti Békéltető Testület",
+        "székhely": "Krisztina krt. 99",
+        "levelezési cím": "1253 Budapest",
+        "telefon": "488 2131",
+        "internetes elérhetőség": "bekeltet.bkik.hu",
+    }
+    _miss = [k for k, v in _need.items() if v not in _t]
+    check(f"{_name} jogi oldal: a békéltető testület adatai hiánytalanok",
+          not _miss, ", ".join(_miss))
+
+# A tájékoztatásnak a honlapon kell lennie, tehát elérhetőnek is: minden oldal
+# láblécéből vezessen rá hivatkozás.
+for _f in ("index.html", os.path.join("en", "index.html")):
+    _t = open(os.path.join(SITE, _f), encoding="utf-8").read()
+    check(f"{_f}: a lábléc a panaszkezelésre is linkel",
+          "#panasz-bekelteto" in _t)
+
+# Az angol oldal jogi hivatkozásai az ANGOL tájékoztatóra mutassanak.
+_en = open(os.path.join(SITE, "en", "index.html"), encoding="utf-8").read()
+check("az angol oldal nem a magyar jogi oldalra linkel",
+      'href="/adatvedelem/' not in _en,
+      f"{_en.count('href=' + chr(34) + '/adatvedelem/')} hivatkozás")
+
+# Az Akismet az űrlap teljes tartalmát látja — adatfeldolgozóként nevesíteni kell.
+for _name, _path in (("magyar", os.path.join(SITE, "adatvedelem", "index.html")),
+                     ("angol", os.path.join(SITE, "en", "privacy", "index.html"))):
+    _t = open(_path, encoding="utf-8").read() if os.path.exists(_path) else ""
+    check(f"{_name} jogi oldal: az Akismet adatfeldolgozóként szerepel", "Akismet" in _t)
+
 # ── kétnyelvűség ──────────────────────────────────────────────────────────
 print("\nKétnyelvűség")
 en_path = os.path.join(ROOT, "site", "en", "index.html")
