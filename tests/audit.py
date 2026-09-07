@@ -451,9 +451,14 @@ for _f in sorted(f for f in os.listdir(ROOT) if f.endswith(".md")):
     # a MISTAKES.md maga rögzíti a hibát, ezért benne szerepelhet
     if _f == "MISTAKES.md":
         continue
-    _m = _false_claim.search(_t)
-    if _m:
+    for _m in _false_claim.finditer(_t):
+        # A kifejezett tagadás ("not hand-coded", "nem kézzel írt") nem állítás,
+        # hanem éppen a helyreigazítása — azt nem tiltjuk.
+        _before = _t[max(0, _m.start() - 40):_m.start()].lower()
+        if any(w in _before for w in ("not ", "never ", "nem ", "sosem ", "isn't ", "is not ")):
+            continue
         _claims.append(f"{_f}: „{_m.group(0)}”")
+        break
 check("egyik dokumentum sem állítja, hogy kézzel írt kód", not _claims, "; ".join(_claims))
 
 print("\nKód")
