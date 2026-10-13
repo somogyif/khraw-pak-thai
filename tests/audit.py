@@ -151,8 +151,9 @@ secret_pat = (r"(api[_-]?key|apikey|secret|passwd|password|private[_-]?key|acces
               r"\s*[:=]\s*['\"][^'\"]{8,}"
               r"|sk_live_[0-9a-zA-Z]{10,}|AIza[0-9A-Za-z_-]{30,}|ghp_[0-9a-zA-Z]{30,}"
               r"|-----BEGIN [A-Z ]*PRIVATE KEY-----")
-# önmagát és a szabályfájlt kihagyjuk: azok szándékosan tartalmazzák a mintákat
-skip = {"tests/audit.py", "CLAUDE.md", ".githooks/pre-commit"}
+# Nincs kivétel — l. a .githooks/pre-commit megjegyzését. A korábbi lista
+# (audit.py, CLAUDE.md, pre-commit) elavult, és lyukat hagyott a szkennelésben.
+skip = set()
 scanned, hits = 0, []
 for dirpath, dirnames, filenames in os.walk(ROOT):
     # A .venv a fejlesztői böngésző-függőség; nem a mi kódunk, és a pip saját
@@ -178,6 +179,36 @@ check("a pre-commit ellenőrzés verziókövetett",
       os.path.exists(os.path.join(ROOT, ".githooks", "pre-commit")))
 check("van projektszintű szabályfájl (CLAUDE.md)",
       os.path.exists(os.path.join(ROOT, "CLAUDE.md")))
+
+# A hosszú szabályfájlt átugorják. A CLAUDE.md 2026-10-14-én 134 sorra hízott, és
+# vissza kellett vágni 95-re; ez az ellenőrzés jelez, mielőtt újra elszalad.
+# A szabály rövid marad, az indoklás a MISTAKES.md-ben él.
+_rules = open(os.path.join(ROOT, "CLAUDE.md"), encoding="utf-8").read().splitlines()
+check("a CLAUDE.md egy képernyő körül marad (max 120 sor)",
+      len(_rules) <= 120, f"{len(_rules)} sor")
+
+# Nem minden ügynök olvassa a CLAUDE.md-t. Az AGENTS.md a bevett, eszközfüggetlen
+# név — legalább mutasson a valódi szabályokra.
+_agents_path = os.path.join(ROOT, "AGENTS.md")
+_agents = open(_agents_path, encoding="utf-8").read() if os.path.exists(_agents_path) else ""
+check("van AGENTS.md, és a CLAUDE.md-re mutat",
+      bool(_agents) and "CLAUDE.md" in _agents,
+      "hiányzik" if not _agents else "nem hivatkozik a CLAUDE.md-re")
+
+# A titok-szkennelés kivételei lyukat hagytak: egy CLAUDE.md-be illesztett valódi
+# kulcs átment mindkét szűrőn. A kivétel nem térhet vissza csendben.
+_hook = open(os.path.join(ROOT, ".githooks", "pre-commit"), encoding="utf-8").read()
+check("a titok-szkennelésben nincs fájl-kivétel",
+      "skip = set()" in open(__file__, encoding="utf-8").read()
+      and "continue ;;" not in _hook,
+      "visszakerült egy kivétel")
+
+# A fejlesztői függőség verziója rögzítve: a CI és a helyi futás ugyanazt kapja.
+_req = os.path.join(ROOT, "requirements-dev.txt")
+check("a fejlesztői függőség verziója rögzített",
+      os.path.exists(_req) and re.search(r"^playwright==\d+\.\d+", 
+                                         open(_req, encoding="utf-8").read(), re.M) is not None,
+      "nincs requirements-dev.txt vagy nincs rögzítve")
 
 # ── fogyasztóvédelmi tájékoztatás ────────────────────────────────────────
 print("\nFogyasztóvédelem")

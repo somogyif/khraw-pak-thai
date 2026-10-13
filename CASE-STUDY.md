@@ -81,7 +81,7 @@ page in a browser**.
 ### So I built the check that could see them
 
 ```
-tests/audit.py         81 checks · no dependencies · runs in a second · pre-commit gate
+tests/audit.py         85 checks · no dependencies · runs in a second · pre-commit gate
 tests/render-check.py  62 checks · real browser · every push, and weekly against production
 ```
 

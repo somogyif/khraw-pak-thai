@@ -15,9 +15,11 @@ SECRET_RE='(api[_-]?key|apikey|secret|passwd|password|private[_-]?key|access[_-]
 leaks=""
 while IFS= read -r f; do
   [ -z "$f" ] && continue
-  case "$f" in
-    CLAUDE.md|.githooks/*|tests/audit.py) continue ;;   # ezek maguk írják le a mintákat
-  esac
+  # Nincs kivétel. Volt egy — CLAUDE.md, a hook maga és az audit —, mert egykor
+  # ezek tartalmazták a keresett mintákat. 2026-10-14-én lemérve: egyik sem
+  # illeszkedik már, a kivétel viszont átengedett volna egy CLAUDE.md-be
+  # beillesztett valódi kulcsot. Ha egy fájl újra illeszkedni kezd, azt javítsuk,
+  # ne a szűrőt gyengítsük.
   if git show ":$f" 2>/dev/null | grep -qEi "$SECRET_RE"; then
     leaks="${leaks}    - ${f}\n"
   fi

@@ -1,0 +1,12 @@
+# Fejlesztői függőségek — a KISZÁLLÍTOTT oldal továbbra is nulla függőségű.
+# Csak a renderelési ellenőrzés (tests/render-check.py) használja.
+#
+# Rögzített verzió, mert a CI-ban a "pip install playwright" mindig a legfrissebbet
+# húzta be: a helyi és a CI-futás különböző böngészőt kapott, és egy playwright-
+# frissítés bármikor eltörhette a CI-t anélkül, hogy a repóban bármi változott volna.
+#
+# Telepítés:
+#   python3 -m venv .venv
+#   .venv/bin/pip install -r requirements-dev.txt
+#   .venv/bin/playwright install chromium
+playwright==1.60.0
