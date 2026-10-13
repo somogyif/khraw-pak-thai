@@ -41,6 +41,45 @@ belül van.
 
 ---
 
+## 2026-10-14 — A titok-szkennelés kivételi listája elavult, és lyukat hagyott
+
+**Mi történt.** A pre-commit hook és az audit is kihagyott három fájlt a
+titok-szkennelésből: `CLAUDE.md`, `tests/audit.py` és maga a hook. Lemérve: egyik
+sem illeszkedett már a keresett mintákra — a kivétel tehát semmit nem védett,
+viszont **egy valódi kulcs, amit valaki a `CLAUDE.md`-be illeszt, mindkét rétegen
+átment volna.** Planted kulccsal igazolva: előtte átengedte, utána blokkolja.
+
+**Gyökérok.** A kivétel annak idején indokolt volt: a fájlok tartalmazták a
+keresett szövegeket. A *szöveg* azóta megváltozott, a *kivétel* nem. Egy olyan
+szűkítés, ami egyszer indokolt volt, csendben fölöslegessé válik — és onnantól már
+csak lyuk.
+
+**Miért pont a CLAUDE.md a rossz hely egy kivételnek.** Ez az a fájl, amit az
+ügynökök a leggyakrabban szerkesztenek, és amibe a legkönnyebben kerül be
+beillesztett tartalom.
+
+**Megelőzés.** A kivételi lista megszűnt (`skip = set()`), és egy ellenőrzés figyeli,
+hogy ne kerüljön vissza. Ha egy fájl újra illeszkedni kezd a mintára, a fájlt kell
+javítani, nem a szűrőt gyengíteni.
+
+---
+
+## 2026-10-14 — A szabályfájl 94-ről 134 sorra hízott
+
+**Mi történt.** A `CLAUDE.md` hat hét alatt 94 sorról 134-re nőtt, mert minden új
+tanulság mellé odakerült a története is.
+
+**Gyökérok.** Minden egyes bővítés indokolt volt külön-külön. Együtt viszont pont azt
+rontották el, amire a fájl való: egy hosszú szabálylistát átfutnak, nem elolvasnak.
+A fájl maga írta le a helyes mintát — „a szabály rövid, az indoklás a
+`MISTAKES.md`-ben él" —, és nem tartottuk be.
+
+**Megelőzés.** Visszavágva 95 sorra, úgy, hogy mind a 26 kulcsfogalom és mind a
+kilenc szabály megmaradt; csak a történetek költöztek a naplóba. Egy ellenőrzés
+bukik, ha a fájl 120 sor fölé megy.
+
+---
+
 ## 2026-08-31 — „Hand-coded" — másodszor csúszott vissza egy valótlan állítás
 
 **Mi történt.** A showcase-dokumentumok hét helyen állították, hogy az oldal

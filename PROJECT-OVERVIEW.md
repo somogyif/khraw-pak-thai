@@ -167,7 +167,11 @@ ship fast and then collapse in production:
   can encode: external listings drifting from reality, regulatory change, copy that
   reads like a translation. Five lenses, each finding adversarially refuted before it
   is reported, and every confirmed finding becomes a check in one of the layers above.
-- **A pre-commit gate** blocks any commit carrying a secret or failing the audit.
+- **A pre-commit gate** blocks any commit carrying a secret or failing the audit, with
+  no file exclusions — the earlier exclusion list had gone stale and would have let a
+  key pasted into the rules file through both layers.
+- **`AGENTS.md`** points non-Claude agents at the same rules, and the dev dependency
+  is pinned in `requirements-dev.txt` so CI and a laptop run the same browser.
 - **A written rules file** (`CLAUDE.md`) records the architecture decisions so future
   changes inherit them instead of drifting.
 
